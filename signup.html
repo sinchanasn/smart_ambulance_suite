@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register new staff account on Smart Ambulance Suite">
+  <title>Staff Signup - Smart Ambulance Suite</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="navbar">
+    <a href="login.html" class="brand">
+      <div class="brand-icon">🚑</div>
+      <span class="brand-title">Smart Ambulance Suite</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="login.html" class="nav-link">Login</a></li>
+      <li><a href="signup.html" class="nav-link active">Signup</a></li>
+      <li><a href="patient.html" class="nav-link">Patient Vitals</a></li>
+      <li><a href="ecg.html" class="nav-link">ECG Telemetry</a></li>
+    </ul>
+  </header>
+
+  <main class="main-container auth-wrapper">
+    <div class="card auth-card">
+      <div class="card-header">
+        <h1 class="card-title">Register Account</h1>
+        <p class="card-subtitle">Create authorized paramedic or clinical account</p>
+      </div>
+
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="fullName" class="form-label">Full Name</label>
+          <input type="text" id="fullName" class="form-control" placeholder="Dr. Sarah Connor" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Work Email</label>
+          <input type="email" id="email" class="form-control" placeholder="s.connor@hospital.org" required>
+        </div>
+
+        <div class="form-group">
+          <label for="role" class="form-label">Medical Role</label>
+          <select id="role" class="form-control" required>
+            <option value="paramedic">Paramedic / EMS Operator</option>
+            <option value="doctor">Emergency Room Doctor</option>
+            <option value="driver">Ambulance Pilot</option>
+            <option value="admin">System Administrator</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="signupBtn">
+          Create Account
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already registered? <a href="login.html">Login here</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Smart Ambulance Suite. All rights reserved. Emergency Medical System.
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

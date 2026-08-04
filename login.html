@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to Smart Ambulance Suite emergency portal">
+  <title>Login - Smart Ambulance Suite</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="navbar">
+    <a href="login.html" class="brand">
+      <div class="brand-icon">🚑</div>
+      <span class="brand-title">Smart Ambulance Suite</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="login.html" class="nav-link active">Login</a></li>
+      <li><a href="signup.html" class="nav-link">Signup</a></li>
+      <li><a href="patient.html" class="nav-link">Patient Vitals</a></li>
+      <li><a href="ecg.html" class="nav-link">ECG Telemetry</a></li>
+    </ul>
+  </header>
+
+  <main class="main-container auth-wrapper">
+    <div class="card auth-card">
+      <div class="card-header">
+        <h1 class="card-title">Staff Portal Login</h1>
+        <p class="card-subtitle">Access live telemetry and patient emergency records</p>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="paramedic@ambulance.org" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="loginBtn">
+          Login to Station
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="signup.html">Register Staff Account</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 Smart Ambulance Suite. All rights reserved. Emergency Medical System.
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

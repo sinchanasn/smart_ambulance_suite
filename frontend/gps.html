@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Ambulance AI - GPS</title>
+
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #eef8f8;
+            color: #173b4d;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #087f8c, #0b4f6c);
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        .status {
+            background: #dfffe8;
+            color: #087f3d;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Main */
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 20px auto;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        /* Left Panel */
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .panel h2 {
+            color: #087f8c;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .section {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        label {
+            display: block;
+            margin-top: 8px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #c8dfe2;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #087f8c;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 11px;
+            margin-top: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .primary {
+            background: #087f8c;
+            color: white;
+        }
+
+        .danger {
+            background: #e63946;
+            color: white;
+        }
+
+        .success {
+            background: #198754;
+            color: white;
+        }
+
+        .blue {
+            background: #0b4f6c;
+            color: white;
+        }
+
+        /* Map */
+        #map {
+            width: 100%;
+            height: 650px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Information Cards */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+        }
+
+        .info-card h3 {
+            font-size: 14px;
+            color: #668;
+        }
+
+        .info-card p {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 7px;
+            color: #087f8c;
+        }
+
+        /* Hospital list */
+        #hospitalList {
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .hospital {
+            background: #f0fafb;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+
+        .hospital:hover {
+            background: #dff4f5;
+        }
+
+        .hospital strong {
+            color: #0b4f6c;
+        }
+
+        /* Alert */
+        .alert-box {
+            background: #fff5f5;
+            border-left: 5px solid #e63946;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .coordinates {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media(max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            #map {
+                height: 500px;
+            }
+
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 500px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>🚑 Smart Ambulance AI Suite</h1>
+        <div class="status" id="gpsStatus">● GPS Offline</div>
+    </header>
+
+    <div class="container">
+
+        <div class="dashboard">
+
+            <!-- LEFT CONTROL PANEL -->
+            <div class="panel">
+
+                <!-- Ambulance -->
+                <div class="section">
+                    <h2>🚑 Ambulance Location</h2>
+
+                    <button class="primary" onclick="startLiveTracking()">
+                        📍 Start Live GPS
+                    </button>
+
+                    <button class="danger" onclick="stopLiveTracking()">
+                        ⛔ Stop Tracking
+                    </button>
+
+                    <div class="coordinates" id="ambulanceCoordinates">
+                        Waiting for GPS...
+                    </div>
+                </div>
+
+                <!-- Patient -->
+                <div class="section">
+                    <h2>🆘 Patient Location</h2>
+
+                    <button class="success" onclick="getPatientLocation()">
+                        📱 Detect Patient GPS
+                    </button>
+
+                    <label>Patient Latitude</label>
+                    <input type="number" id="patientLat" placeholder="Example: 12.9716" step="any">
+
+                    <label>Patient Longitude</label>
+                    <input type="number" id="patientLng" placeholder="Example: 77.5946" step="any">
+
+                    <button class="blue" onclick="setPatientLocation()">
+                        🆘 Set Patient Location
+                    </button>
+                </div>
+
+                <!-- Hospitals -->
+                <div class="section">
+                    <h2>🏥 Nearby Hospitals</h2>
+
+                    <button class="primary" onclick="findHospitals()">
+                        🔎 Find Nearby Hospitals
+                    </button>
+
+                    <div id="hospitalList">
+                        No hospitals searched yet.
+                    </div>
+                </div>
+
+                <!-- Hospital Alert -->
+                <div class="section">
+                    <h2>🏥 Hospital Alert</h2>
+
+                    <label>Heart Rate (BPM)</label>
+                    <input type="number" id="heartRate" placeholder="e.g. 85">
+
+                    <label>SpO₂ (%)</label>
+                    <input type="number" id="spo2" placeholder="e.g. 97">
+
+                    <label>Blood Pressure</label>
+                    <input type="text" id="bp" placeholder="e.g. 120/80">
+
+                    <label>Respiratory Rate</label>
+                    <input type="number" id="respRate" placeholder="e.g. 18">
+
+                    <button class="danger" onclick="sendHospitalAlert()">
+                        🚨 Send Hospital Alert
+                    </button>
+
+                    <div id="alertMessage"></div>
+                </div>
+
+            </div>
+
+            <!-- MAP -->
+            <div>
+                <div id="map"></div>
+            </div>
+
+        </div>
+
+        <!-- INFORMATION CARDS -->
+        <div class="info-grid">
+
+            <div class="info-card">
+                <h3>🚑 ETA to Patient</h3>
+                <p id="etaPatient">-- min</p>
+            </div>
+
+            <div class="info-card">
+                <h3>🏥 ETA to Hospital</h3>
+                <p id="etaHospital">-- min</p>
+            </div>
+
+            <div class="info-card">
+                <h3>🗺️ Patient Distance</h3>
+                <p id="patientDistance">-- km</p>
+            </div>
+
+            <div class="info-card">
+                <h3>📡 Sharing Status</h3>
+                <p id="sharingStatus">OFF</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+
+        // -----------------------------
+        // MAP INITIALIZATION
+        // -----------------------------
+
+        const map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                attribution: '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+
+
+        // -----------------------------
+        // VARIABLES
+        // -----------------------------
+
+        let ambulanceMarker = null;
+        let patientMarker = null;
+        let hospitalMarkers = [];
+
+        let ambulanceLocation = null;
+        let patientLocation = null;
+
+        let watchID = null;
+
+        let routeLine1 = null;
+        let routeLine2 = null;
+
+
+        // -----------------------------
+        // AMBULANCE LIVE GPS
+        // -----------------------------
+
+        function startLiveTracking() {
+
+            if (!navigator.geolocation) {
+                alert("GPS is not supported by this browser.");
+                return;
+            }
+
+            document.getElementById("gpsStatus").innerText =
+                "● GPS Tracking Active";
+
+            document.getElementById("gpsStatus").style.background =
+                "#dfffe8";
+
+            watchID = navigator.geolocation.watchPosition(
+
+                function (position) {
+
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    ambulanceLocation = [lat, lng];
+
+                    document.getElementById("ambulanceCoordinates").innerText =
+                        `Latitude: ${lat.toFixed(6)}
+                     | Longitude: ${lng.toFixed(6)}`;
+
+                    if (!ambulanceMarker) {
+
+                        ambulanceMarker = L.marker(
+                            [lat, lng],
+                            {
+                                title: "Ambulance"
+                            }
+                        ).addTo(map);
+
+                        ambulanceMarker.bindPopup(
+                            "<b>🚑 Ambulance</b><br>Live Location"
+                        );
+
+                    } else {
+
+                        ambulanceMarker.setLatLng([lat, lng]);
+
+                    }
+
+                    map.setView([lat, lng], 15);
+
+                    // Update route if patient exists
+                    if (patientLocation) {
+                        calculatePatientRoute();
+                    }
+
+                },
+
+                function (error) {
+
+                    console.log(error);
+
+                    alert(
+                        "Unable to access GPS. Please enable location permission."
+                    );
+
+                },
+
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 2000,
+                    timeout: 10000
+                }
+            );
+        }
+
+
+        // -----------------------------
+        // STOP GPS
+        // -----------------------------
+
+        function stopLiveTracking() {
+
+            if (watchID !== null) {
+
+                navigator.geolocation.clearWatch(watchID);
+
+                watchID = null;
+
+                document.getElementById("gpsStatus").innerText =
+                    "● GPS Offline";
+            }
+        }
+
+
+        // -----------------------------
+        // PATIENT GPS
+        // -----------------------------
+
+        function getPatientLocation() {
+
+            if (!navigator.geolocation) {
+
+                alert("GPS not supported.");
+
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+
+                function (position) {
+
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    document.getElementById("patientLat").value = lat;
+                    document.getElementById("patientLng").value = lng;
+
+                    setPatientLocation();
+
+                },
+
+                function () {
+
+                    alert(
+                        "Unable to detect patient location."
+                    );
+
+                },
+
+                {
+                    enableHighAccuracy: true
+                }
+            );
+        }
+
+
+        // -----------------------------
+        // SET PATIENT LOCATION
+        // -----------------------------
+
+        function setPatientLocation() {
+
+            const lat = parseFloat(
+                document.getElementById("patientLat").value
+            );
+
+            const lng = parseFloat(
+                document.getElementById("patientLng").value
+            );
+
+            if (isNaN(lat) || isNaN(lng)) {
+
+                alert("Enter valid patient coordinates.");
+
+                return;
+            }
+
+            patientLocation = [lat, lng];
+
+            if (patientMarker) {
+
+                patientMarker.setLatLng(patientLocation);
+
+            } else {
+
+                patientMarker = L.marker(
+                    patientLocation,
+                    {
+                        title: "Patient"
+                    }
+                ).addTo(map);
+
+                patientMarker.bindPopup(
+                    "<b>🆘 Patient Location</b>"
+                );
+
+            }
+
+            map.setView(patientLocation, 14);
+
+            if (ambulanceLocation) {
+
+                calculatePatientRoute();
+
+            }
+        }
+
+
+        // -----------------------------
+        // ROUTING
+        // -----------------------------
+
+        async function calculatePatientRoute() {
+
+            if (!ambulanceLocation || !patientLocation) {
+                return;
+            }
+
+            const start =
+                `${ambulanceLocation[1]},${ambulanceLocation[0]}`;
+
+            const end =
+                `${patientLocation[1]},${patientLocation[0]}`;
+
+            const url =
+                `https://router.project-osrm.org/route/v1/driving/` +
+                `${start};${end}?overview=full&geometries=geojson`;
+
+            try {
+
+                const response = await fetch(url);
+
+                const data = await response.json();
+
+                if (data.routes.length === 0) {
+                    return;
+                }
+
+                const route = data.routes[0];
+
+                const distance =
+                    (route.distance / 1000).toFixed(1);
+
+                const time =
+                    Math.ceil(route.duration / 60);
+
+                document.getElementById(
+                    "patientDistance"
+                ).innerText = `${distance} km`;
+
+                document.getElementById(
+                    "etaPatient"
+                ).innerText = `${time} min`;
+
+                if (routeLine1) {
+                    map.removeLayer(routeLine1);
+                }
+
+                routeLine1 = L.geoJSON(
+                    route.geometry
+                ).addTo(map);
+
+            } catch (error) {
+
+                console.log("Routing error:", error);
+
+            }
+        }
+
+
+        // -----------------------------
+        // FIND NEARBY HOSPITALS
+        // -----------------------------
+
+        async function findHospitals() {
+
+            let location = patientLocation ||
+                ambulanceLocation;
+
+            if (!location) {
+
+                alert(
+                    "Set ambulance or patient location first."
+                );
+
+                return;
+            }
+
+            const lat = location[0];
+            const lng = location[1];
+
+            const query = `
+            [out:json];
+            (
+                node["amenity"="hospital"](around:10000,${lat},${lng});
+                way["amenity"="hospital"](around:10000,${lat},${lng});
+                relation["amenity"="hospital"](around:10000,${lat},${lng});
+            );
+            out center;
+        `;
+
+            try {
+
+                const response = await fetch(
+                    "https://overpass-api.de/api/interpreter",
+                    {
+                        method: "POST",
+                        body: query
+                    }
+                );
+
+                const data = await response.json();
+
+                hospitalMarkers.forEach(
+                    marker => map.removeLayer(marker)
+                );
+
+                hospitalMarkers = [];
+
+                const hospitalList =
+                    document.getElementById("hospitalList");
+
+                hospitalList.innerHTML = "";
+
+                if (data.elements.length === 0) {
+
+                    hospitalList.innerHTML =
+                        "No nearby hospitals found.";
+
+                    return;
+                }
+
+                data.elements
+                    .slice(0, 10)
+                    .forEach((hospital, index) => {
+
+                        const hLat =
+                            hospital.lat ||
+                            hospital.center?.lat;
+
+                        const hLng =
+                            hospital.lon ||
+                            hospital.center?.lon;
+
+                        if (!hLat || !hLng) {
+                            return;
+                        }
+
+                        const name =
+                            hospital.tags?.name ||
+                            "Hospital";
+
+                        const distance =
+                            calculateDistance(
+                                lat,
+                                lng,
+                                hLat,
+                                hLng
+                            );
+
+                        const marker =
+                            L.marker([hLat, hLng])
+                                .addTo(map);
+
+                        marker.bindPopup(
+                            `<b>🏥 ${name}</b><br>
+                         Distance: ${distance.toFixed(1)} km`
+                        );
+
+                        hospitalMarkers.push(marker);
+
+                        const div =
+                            document.createElement("div");
+
+                        div.className = "hospital";
+
+                        div.innerHTML = `
+                        <strong>🏥 ${name}</strong>
+                        <br>
+                        ${distance.toFixed(1)} km away
+                        <br>
+                        <button
+                            class="primary"
+                            onclick="selectHospital(
+                                ${hLat},
+                                ${hLng},
+                                '${name.replace(/'/g, "\\'")}'
+                            )">
+                            Select Hospital
+                        </button>
+                    `;
+
+                        hospitalList.appendChild(div);
+
+                    });
+
+            } catch (error) {
+
+                console.log(error);
+
+                alert(
+                    "Unable to find hospitals. Check internet connection."
+                );
+            }
+        }
+
+
+        // -----------------------------
+        // SELECT HOSPITAL
+        // -----------------------------
+
+        let selectedHospital = null;
+
+        function selectHospital(lat, lng, name) {
+
+            selectedHospital = {
+                lat: lat,
+                lng: lng,
+                name: name
+            };
+
+            alert(
+                `Selected Hospital:\n${name}`
+            );
+
+            calculateHospitalRoute();
+        }
+
+
+        // -----------------------------
+        // ROUTE TO HOSPITAL
+        // -----------------------------
+
+        async function calculateHospitalRoute() {
+
+            if (!patientLocation || !selectedHospital) {
+                return;
+            }
+
+            const start =
+                `${patientLocation[1]},${patientLocation[0]}`;
+
+            const end =
+                `${selectedHospital.lng},${selectedHospital.lat}`;
+
+            const url =
+                `https://router.project-osrm.org/route/v1/driving/` +
+                `${start};${end}?overview=full&geometries=geojson`;
+
+            try {
+
+                const response = await fetch(url);
+
+                const data = await response.json();
+
+                if (!data.routes.length) {
+                    return;
+                }
+
+                const route = data.routes[0];
+
+                const time =
+                    Math.ceil(route.duration / 60);
+
+                document.getElementById(
+                    "etaHospital"
+                ).innerText = `${time} min`;
+
+                if (routeLine2) {
+                    map.removeLayer(routeLine2);
+                }
+
+                routeLine2 = L.geoJSON(
+                    route.geometry
+                ).addTo(map);
+
+            } catch (error) {
+
+                console.log(error);
+
+            }
+        }
+
+
+        // -----------------------------
+        // DISTANCE CALCULATION
+        // -----------------------------
+
+        function calculateDistance(
+            lat1,
+            lon1,
+            lat2,
+            lon2
+        ) {
+
+            const R = 6371;
+
+            const dLat =
+                (lat2 - lat1) *
+                Math.PI / 180;
+
+            const dLon =
+                (lon2 - lon1) *
+                Math.PI / 180;
+
+            const a =
+                Math.sin(dLat / 2) ** 2 +
+                Math.cos(lat1 * Math.PI / 180) *
+                Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) ** 2;
+
+            const c =
+                2 * Math.atan2(
+                    Math.sqrt(a),
+                    Math.sqrt(1 - a)
+                );
+
+            return R * c;
+        }
+
+
+        // -----------------------------
+        // HOSPITAL ALERT
+        // -----------------------------
+
+        function sendHospitalAlert() {
+
+            if (!selectedHospital) {
+
+                alert(
+                    "Please select a hospital first."
+                );
+
+                return;
+            }
+
+            const heartRate =
+                document.getElementById(
+                    "heartRate"
+                ).value || "Not provided";
+
+            const spo2 =
+                document.getElementById(
+                    "spo2"
+                ).value || "Not provided";
+
+            const bp =
+                document.getElementById(
+                    "bp"
+                ).value || "Not provided";
+
+            const respRate =
+                document.getElementById(
+                    "respRate"
+                ).value || "Not provided";
+
+            const patient =
+                patientLocation ?
+                    `${patientLocation[0].toFixed(6)},
+             ${patientLocation[1].toFixed(6)}`
+                    :
+                    "Not available";
+
+            const eta =
+                document.getElementById(
+                    "etaHospital"
+                ).innerText;
+
+            document.getElementById(
+                "sharingStatus"
+            ).innerText = "ACTIVE";
+
+            document.getElementById(
+                "alertMessage"
+            ).innerHTML = `
+            <div class="alert-box">
+                <b>🚨 Emergency Alert Sent</b><br><br>
+
+                <b>Hospital:</b>
+                ${selectedHospital.name}<br>
+
+                <b>Patient Location:</b>
+                ${patient}<br>
+
+                <b>Heart Rate:</b>
+                ${heartRate} BPM<br>
+
+                <b>SpO₂:</b>
+                ${spo2}%<br>
+
+                <b>Blood Pressure:</b>
+                ${bp}<br>
+
+                <b>Respiratory Rate:</b>
+                ${respRate}<br>
+
+                <b>ETA:</b>
+                ${eta}
+            </div>
+        `;
+
+            /*
+                In a real application,
+                send this information to your backend:
+    
+                fetch("/api/hospital-alert", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        hospital: selectedHospital,
+                        patientLocation: patientLocation,
+                        vitals: {
+                            heartRate,
+                            spo2,
+                            bp,
+                            respRate
+                        },
+                        eta: eta
+                    })
+                });
+            */
+        }
+
+    </script>
+
+</body>
+
+</html>

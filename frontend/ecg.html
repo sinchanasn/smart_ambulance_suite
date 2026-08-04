@@ -1,84 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Real-time ECG Lead II Telemetry - Smart Ambulance Suite">
-  <title>ECG Telemetry - Smart Ambulance Suite</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Ambulance - ECG Image Capture</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <header class="navbar">
-    <a href="ecg.html" class="brand">
-      <div class="brand-icon">⚡</div>
-      <span class="brand-title">Smart Ambulance Suite</span>
-    </a>
-    <ul class="nav-links">
-      <li><a href="login.html" class="nav-link">Login</a></li>
-      <li><a href="signup.html" class="nav-link">Signup</a></li>
-      <li><a href="patient.html" class="nav-link">Patient Vitals</a></li>
-      <li><a href="ecg.html" class="nav-link active">ECG Telemetry</a></li>
-    </ul>
-  </header>
+    <div class="login-container">
+        <div class="login-card ecg-card">
+            <div class="icon-container">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <h1>ECG Image Capture</h1>
+            <p class="subtitle">Capture or upload a clear image of the patient's ECG report for AI-based analysis.</p>
 
-  <main class="main-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-      <div>
-        <h1 style="font-size: 2rem; font-weight: 700;">Real-Time ECG Telemetry</h1>
-        <p style="color: var(--text-muted);">Lead II Waveform Feed | Patient #PAT-8921</p>
-      </div>
-      <span class="vital-status status-normal" style="font-size: 1rem; padding: 0.5rem 1rem;">
-        🟢 STREAM LIVE (25 mm/s)
-      </span>
-    </div>
+            <div class="error-message" id="ecgErrorMessage"></div>
+            <div class="success-message" id="ecgSuccessMessage" style="display: none;"></div>
 
-    <!-- ECG Waveform Canvas Card -->
-    <div class="ecg-container">
-      <div style="display: flex; justify-content: space-between; position: absolute; top: 15px; left: 20px; right: 20px; z-index: 10; color: #06b6d4; font-size: 0.85rem; font-family: monospace;">
-        <span>LEAD II (P-Q-R-S-T)</span>
-        <span>GAIN: 10mm/mV</span>
-        <span>FILTER: 0.5 - 40 Hz</span>
-      </div>
-      <canvas id="ecgCanvas"></canvas>
-    </div>
+            <!-- Initial Action Buttons -->
+            <div class="ecg-actions" id="ecgInitialActions">
+                <!-- Using a hidden file input for camera capture and upload -->
+                <!-- The capture="environment" attribute specifically opens the back camera on mobile devices -->
+                <input type="file" id="cameraInput" accept=".jpg, .jpeg, .png, image/jpeg, image/png, image/jpg"
+                    capture="environment" style="display: none;">
+                <button type="button" class="primary-button action-btn"
+                    onclick="document.getElementById('cameraInput').click()">
+                    <i class="fa-solid fa-camera"></i> Capture Image
+                </button>
 
-    <!-- Telemetry Data Cards -->
-    <div class="dashboard-grid">
-      <div class="vital-card">
-        <div class="vital-header">
-          <span>QRS DURATION</span>
+                <input type="file" id="uploadInput" accept=".jpg, .jpeg, .png, image/jpeg, image/png, image/jpg"
+                    style="display: none;">
+                <button type="button" class="secondary-button action-btn"
+                    onclick="document.getElementById('uploadInput').click()">
+                    <i class="fa-solid fa-upload"></i> Upload ECG Image
+                </button>
+            </div>
+
+            <!-- Preview Area (Hidden initially) -->
+            <div class="ecg-preview-container" id="ecgPreviewContainer" style="display: none;">
+                <img id="ecgPreviewImage" src="" alt="ECG Preview">
+
+                <div class="form-actions-row">
+                    <button type="button" id="retakeBtn" class="secondary-button"
+                        onclick="document.getElementById('cameraInput').click()">Retake Image</button>
+                    <button type="button" id="uploadAnotherBtn" class="secondary-button"
+                        onclick="document.getElementById('uploadInput').click()">Upload Another</button>
+                </div>
+                <button type="button" id="submitEcgBtn" class="login-button" style="width: 100%;">Submit ECG</button>
+            </div>
         </div>
-        <div class="vital-value" style="font-size: 1.75rem; color: var(--accent-cyan);">92 ms</div>
-        <span class="vital-status status-normal">NORMAL (&lt;120ms)</span>
-      </div>
-
-      <div class="vital-card">
-        <div class="vital-header">
-          <span>QT / QTc INTERVAL</span>
-        </div>
-        <div class="vital-value" style="font-size: 1.75rem; color: var(--text-main);">410 ms</div>
-        <span class="vital-status status-normal">NORMAL</span>
-      </div>
-
-      <div class="vital-card">
-        <div class="vital-header">
-          <span>ST SEGMENT EVAL</span>
-        </div>
-        <div class="vital-value" style="font-size: 1.75rem; color: var(--accent-green);">+0.1 mV</div>
-        <span class="vital-status status-normal">NO ELEVATION</span>
-      </div>
     </div>
 
-    <div style="display: flex; gap: 1rem;">
-      <a href="success.html" class="btn btn-emergency">Trigger ER Alarm Alert</a>
-      <a href="patient.html" class="btn btn-secondary">Back to Vitals</a>
-    </div>
-  </main>
-
-  <footer>
-    &copy; 2026 Smart Ambulance Suite. All rights reserved. Emergency Medical System.
-  </footer>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

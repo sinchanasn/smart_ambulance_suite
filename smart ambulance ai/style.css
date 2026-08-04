@@ -1,0 +1,373 @@
+/* Base styles and variables */
+:root {
+    --primary-teal: #008080;
+    --primary-light-blue: #e0f7fa;
+    --primary-dark-teal: #005959;
+    --accent-red: #ff5252;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --bg-color: #f0f8ff;
+    /* AliceBlue for a clean, light feel */
+    --card-bg: #ffffff;
+    --border-radius: 16px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+.login-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 40px 30px;
+    box-shadow: 0 10px 30px rgba(0, 128, 128, 0.1);
+    text-align: center;
+}
+
+.icon-container {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-light-blue), #b2ebf2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px;
+    color: var(--primary-teal);
+    font-size: 32px;
+    box-shadow: 0 4px 10px rgba(0, 128, 128, 0.15);
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--primary-teal);
+}
+
+.subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.error-message {
+    color: var(--accent-red);
+    font-size: 14px;
+    background-color: rgba(255, 82, 82, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    display: none;
+    text-align: left;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--primary-teal);
+    font-size: 16px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--text-main);
+    background-color: #fafafa;
+    transition: var(--transition);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-teal);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(0, 128, 128, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.remember-me input[type="checkbox"] {
+    accent-color: var(--primary-teal);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: var(--primary-teal);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.forgot-password:hover {
+    color: var(--primary-dark-teal);
+    text-decoration: underline;
+}
+
+.login-button {
+    background-color: var(--primary-teal);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(0, 128, 128, 0.2);
+}
+
+.login-button:hover {
+    background-color: var(--primary-dark-teal);
+    box-shadow: 0 6px 16px rgba(0, 128, 128, 0.3);
+    transform: translateY(-2px);
+}
+
+.login-button:active {
+    transform: translateY(0);
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-5px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* Responsiveness */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 30px 20px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+}
+
+.auth-link-container {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Registration Specific */
+.registration-container {
+    max-width: 800px;
+    padding: 30px 20px;
+}
+
+.registration-card {
+    padding: 40px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.select-group select {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--text-main);
+    background-color: #fafafa;
+    transition: var(--transition);
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.select-group select:focus {
+    outline: none;
+    border-color: var(--primary-teal);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(0, 128, 128, 0.1);
+}
+
+.textarea-group {
+    align-items: flex-start;
+}
+
+.textarea-group .input-icon {
+    top: 16px;
+}
+
+.textarea-group textarea {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--text-main);
+    background-color: #fafafa;
+    transition: var(--transition);
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.textarea-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-teal);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(0, 128, 128, 0.1);
+}
+
+.form-actions-row {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.form-actions-row button {
+    flex: 1;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 120px;
+}
+
+.secondary-button {
+    background-color: #f0f0f0;
+    color: var(--text-main);
+}
+
+.secondary-button:hover {
+    background-color: #e0e0e0;
+}
+
+.primary-button {
+    background-color: var(--primary-light-blue);
+    color: var(--primary-dark-teal);
+}
+
+.primary-button:hover {
+    background-color: #b2ebf2;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-actions-row {
+        flex-direction: column;
+    }
+}
+
+/* ECG Specific */
+.ecg-card {
+    max-width: 550px;
+    margin: 0 auto;
+}
+
+.ecg-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.action-btn {
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.ecg-preview-container {
+    margin-top: 20px;
+}
+
+#ecgPreviewImage {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 2px dashed #e0e0e0;
+    margin-bottom: 20px;
+    background-color: #fafafa;
+}
+
+.success-message {
+    color: #2e7d32;
+    font-size: 14px;
+    background-color: #c8e6c9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+}

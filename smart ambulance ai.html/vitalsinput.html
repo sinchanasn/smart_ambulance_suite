@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Ambulance AI Suite</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #eef7f8;
+            color: #163b40;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #006d77, #0096a6);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 15px;
+        }
+
+        /* Main container */
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            color: #006d77;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #d5eeee;
+            padding-bottom: 10px;
+        }
+
+        /* Vitals grid */
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border: 1px solid #b7d6d9;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #008c99;
+            box-shadow: 0 0 5px rgba(0, 140, 153, 0.3);
+        }
+
+        .unit {
+            color: #66888c;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* Button */
+        .button-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        button {
+            background: #d62839;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #b91f2e;
+        }
+
+        /* Risk result */
+        .risk-box {
+            text-align: center;
+            padding: 25px;
+            border-radius: 12px;
+            background: #f5fafb;
+            border: 2px solid #d5eeee;
+        }
+
+        #riskLevel {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 15px;
+        }
+
+        /* Alerts */
+        .alert {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .critical {
+            background: #ffe1e1;
+            color: #b00020;
+            border-left: 6px solid #d00000;
+        }
+
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 6px solid #ffc107;
+        }
+
+        .normal {
+            background: #dff6e4;
+            color: #176b2c;
+            border-left: 6px solid #28a745;
+        }
+
+        /* Emergency section */
+        .emergency {
+            background: #fff1f1;
+            border: 2px solid #ffcccc;
+        }
+
+        .emergency h2 {
+            color: #c1121f;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background: #003f46;
+            color: white;
+            padding: 18px;
+            margin-top: 40px;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 700px) {
+            .vitals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 23px;
+            }
+
+            .container {
+                width: 94%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>🚑 Smart Ambulance AI Suite</h1>
+        <p>Real-Time Patient Monitoring & AI Risk Assessment</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Patient Vitals -->
+        <div class="card">
+            <h2>🩺 Patient Vital Signs</h2>
+
+            <div class="vitals-grid">
+
+                <div class="input-group">
+                    <label>❤️ Heart Rate (Pulse)</label>
+                    <input type="number" id="heartRate" placeholder="Example: 80">
+                    <span class="unit">BPM</span>
+                </div>
+
+                <div class="input-group">
+                    <label>🩸 Blood Pressure</label>
+                    <input type="text" id="bloodPressure" placeholder="Example: 120/80">
+                    <span class="unit">Systolic / Diastolic (mmHg)</span>
+                </div>
+
+                <div class="input-group">
+                    <label>🫁 SpO₂</label>
+                    <input type="number" id="spo2" placeholder="Example: 98">
+                    <span class="unit">Oxygen saturation (%)</span>
+                </div>
+
+                <div class="input-group">
+                    <label>🌬️ Respiratory Rate</label>
+                    <input type="number" id="respRate" placeholder="Example: 16">
+                    <span class="unit">Breaths/min</span>
+                </div>
+
+                <div class="input-group">
+                    <label>🌡️ Body Temperature</label>
+                    <input type="number" step="0.1" id="temperature" placeholder="Example: 37">
+                    <span class="unit">°C</span>
+                </div>
+
+                <div class="input-group">
+                    <label>🍬 Blood Glucose</label>
+                    <input type="number" id="glucose" placeholder="Optional">
+                    <span class="unit">mg/dL (Optional)</span>
+                </div>
+
+                <div class="input-group">
+                    <label>🧠 GCS Score</label>
+                    <input type="number" id="gcs" min="3" max="15" placeholder="Optional">
+                    <span class="unit">Glasgow Coma Scale (3–15)</span>
+                </div>
+
+            </div>
+
+            <div class="button-container">
+                <button onclick="assessRisk()">🤖 Assess Patient Risk</button>
+            </div>
+        </div>
+
+
+        <!-- AI Risk Assessment -->
+        <div class="card">
+            <h2>🤖 AI Risk Assessment</h2>
+
+            <div class="risk-box">
+                <p>Patient Risk Level:</p>
+
+                <div id="riskLevel">
+                    Waiting for assessment...
+                </div>
+
+                <p id="riskDescription">
+                    Enter patient vitals and click "Assess Patient Risk".
+                </p>
+            </div>
+        </div>
+
+
+        <!-- Alerts -->
+        <div class="card emergency">
+            <h2>🚨 Medical Alerts</h2>
+
+            <div id="alerts">
+                No alerts currently.
+            </div>
+        </div>
+
+    </div>
+
+
+    <footer>
+        Smart Ambulance AI Suite | Emergency Patient Monitoring System
+    </footer>
+
+
+    <script>
+
+        function assessRisk() {
+
+            // Get input values
+            let heartRate = Number(document.getElementById("heartRate").value);
+            let bloodPressure = document.getElementById("bloodPressure").value;
+            let spo2 = Number(document.getElementById("spo2").value);
+            let respRate = Number(document.getElementById("respRate").value);
+            let temperature = Number(document.getElementById("temperature").value);
+            let glucose = Number(document.getElementById("glucose").value);
+            let gcs = Number(document.getElementById("gcs").value);
+
+            let riskScore = 0;
+            let alerts = [];
+
+            // -------------------------
+            // SpO2 assessment
+            // -------------------------
+
+            if (spo2 > 0 && spo2 < 90) {
+
+                riskScore += 3;
+
+                alerts.push(
+                    "🚨 SpO₂ is critically low. Immediate medical attention required."
+                );
+
+            } else if (spo2 > 0 && spo2 < 94) {
+
+                riskScore += 2;
+
+                alerts.push(
+                    "⚠️ SpO₂ is below the normal range. Monitor oxygen level closely."
+                );
+            }
+
+
+            // -------------------------
+            // Heart rate assessment
+            // -------------------------
+
+            if (heartRate > 0 && (heartRate < 50 || heartRate > 120)) {
+
+                riskScore += 2;
+
+                alerts.push(
+                    "⚠️ Abnormal heart rate detected. Monitor patient's pulse."
+                );
+            }
+
+
+            // -------------------------
+            // Respiratory rate
+            // -------------------------
+
+            if (respRate > 0 && (respRate < 10 || respRate > 25)) {
+
+                riskScore += 2;
+
+                alerts.push(
+                    "⚠️ Abnormal respiratory rate detected."
+                );
+            }
+
+
+            // -------------------------
+            // Temperature
+            // -------------------------
+
+            if (temperature > 0 && temperature >= 39) {
+
+                riskScore += 2;
+
+                alerts.push(
+                    "🌡️ High body temperature detected."
+                );
+
+            } else if (temperature > 0 && temperature < 35) {
+
+                riskScore += 3;
+
+                alerts.push(
+                    "🚨 Body temperature is critically low."
+                );
+            }
+
+
+            // -------------------------
+            // Blood Pressure
+            // -------------------------
+
+            if (bloodPressure.includes("/")) {
+
+                let bp = bloodPressure.split("/");
+
+                let systolic = Number(bp[0]);
+                let diastolic = Number(bp[1]);
+
+                if (systolic >= 180 || diastolic >= 120) {
+
+                    riskScore += 3;
+
+                    alerts.push(
+                        "🚨 Blood pressure is critically high."
+                    );
+
+                } else if (systolic < 90 || diastolic < 60) {
+
+                    riskScore += 2;
+
+                    alerts.push(
+                        "⚠️ Blood pressure is low. Monitor patient closely."
+                    );
+                }
+            }
+
+
+            // -------------------------
+            // Blood glucose
+            // -------------------------
+
+            if (glucose > 0 && glucose < 70) {
+
+                riskScore += 2;
+
+                alerts.push(
+                    "⚠️ Blood glucose is low."
+                );
+
+            } else if (glucose > 250) {
+
+                riskScore += 2;
+
+                alerts.push(
+                    "⚠️ Blood glucose is very high."
+                );
+            }
+
+
+            // -------------------------
+            // GCS assessment
+            // -------------------------
+
+            if (gcs > 0 && gcs <= 8) {
+
+                riskScore += 3;
+
+                alerts.push(
+                    "🚨 Low GCS score detected. Immediate medical assessment required."
+                );
+
+            } else if (gcs > 0 && gcs <= 12) {
+
+                riskScore += 2;
+
+                alerts.push(
+                    "⚠️ Reduced consciousness level detected."
+                );
+            }
+
+
+            // -------------------------
+            // Final Risk Assessment
+            // -------------------------
+
+            let riskLevel = document.getElementById("riskLevel");
+            let riskDescription = document.getElementById("riskDescription");
+            let alertBox = document.getElementById("alerts");
+
+
+            if (riskScore >= 6) {
+
+                riskLevel.innerHTML = "🔴 CRITICAL RISK";
+                riskLevel.style.color = "#d00000";
+
+                riskDescription.innerHTML =
+                    "Immediate medical attention and rapid intervention recommended.";
+
+            }
+
+            else if (riskScore >= 3) {
+
+                riskLevel.innerHTML = "🟡 MODERATE RISK";
+                riskLevel.style.color = "#d68c00";
+
+                riskDescription.innerHTML =
+                    "Patient requires close monitoring and medical evaluation.";
+
+            }
+
+            else {
+
+                riskLevel.innerHTML = "🟢 LOW RISK";
+                riskLevel.style.color = "#188038";
+
+                riskDescription.innerHTML =
+                    "Current vital signs do not indicate major abnormalities.";
+            }
+
+
+            // -------------------------
+            // Display Alerts
+            // -------------------------
+
+            if (alerts.length === 0) {
+
+                alertBox.innerHTML =
+                    '<div class="alert normal">✅ No major alerts detected.</div>';
+
+            } else {
+
+                alertBox.innerHTML = "";
+
+                alerts.forEach(function (alert) {
+
+                    let className = alert.includes("🚨")
+                        ? "critical"
+                        : "warning";
+
+                    alertBox.innerHTML +=
+                        '<div class="alert ' + className + '">' +
+                        alert +
+                        '</div>';
+                });
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Ambulance AI - Offline Storage</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #eef7f8;
+    color: #173b4d;
+}
+
+/* HEADER */
+header {
+    background: linear-gradient(135deg, #075985, #0f766e);
+    color: white;
+    padding: 20px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+header h1 {
+    font-size: 25px;
+}
+
+header p {
+    margin-top: 5px;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.connection {
+    padding: 9px 15px;
+    border-radius: 20px;
+    background: #16a34a;
+    font-weight: bold;
+}
+
+/* MAIN */
+.container {
+    width: 94%;
+    max-width: 1250px;
+    margin: 25px auto;
+}
+
+/* SECTION */
+.section {
+    background: white;
+    margin-bottom: 22px;
+    padding: 22px;
+    border-radius: 14px;
+    border-left: 5px solid #0f766e;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    color: #075985;
+    margin-bottom: 18px;
+    font-size: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #31586b;
+    font-size: 14px;
+}
+
+input,
+select,
+textarea {
+    padding: 11px;
+    border: 1px solid #b7d4dc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #0f766e;
+    box-shadow: 0 0 4px rgba(15,118,110,0.3);
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* BUTTONS */
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+button {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    font-size: 14px;
+}
+
+.save-btn {
+    background: #0f766e;
+}
+
+.sync-btn {
+    background: #2563eb;
+}
+
+.clear-btn {
+    background: #64748b;
+}
+
+.delete-btn {
+    background: #dc2626;
+}
+
+button:hover {
+    opacity: 0.88;
+}
+
+/* STATUS */
+.status-box {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+}
+
+.pending {
+    color: #b45309;
+    font-weight: bold;
+}
+
+.synced {
+    color: #15803d;
+    font-weight: bold;
+}
+
+/* ALERT */
+.alert {
+    padding: 13px;
+    border-radius: 8px;
+    margin-top: 10px;
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+}
+
+/* STORED RECORDS */
+.record {
+    background: #f8fafc;
+    border: 1px solid #d5e3e8;
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 15px;
+}
+
+.record-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.record h3 {
+    color: #075985;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.record-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    font-size: 14px;
+}
+
+.record-grid div {
+    background: white;
+    padding: 9px;
+    border-radius: 7px;
+}
+
+.no-records {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+@media(max-width:600px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .container {
+        width: 96%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>🚑 Smart Ambulance AI Suite</h1>
+        <p>Offline Emergency Patient Storage</p>
+    </div>
+
+    <div class="connection" id="connectionStatus">
+        🟢 Online
+    </div>
+</header>
+
+
+<div class="container">
+
+<form id="patientForm">
+
+<!-- PATIENT DETAILS -->
+<div class="section">
+<h2>👤 Patient Details</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Patient Name</label>
+<input type="text" id="patientName" required>
+</div>
+
+<div class="field">
+<label>Patient ID</label>
+<input type="text" id="patientId" required>
+</div>
+
+<div class="field">
+<label>Age</label>
+<input type="number" id="age">
+</div>
+
+<div class="field">
+<label>Gender</label>
+<select id="gender">
+<option value="">Select</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
+</div>
+
+<div class="field">
+<label>Emergency Type</label>
+<select id="emergencyType">
+<option value="">Select</option>
+<option>Cardiac Emergency</option>
+<option>Accident / Trauma</option>
+<option>Breathing Difficulty</option>
+<option>Stroke</option>
+<option>Unconscious</option>
+<option>Other</option>
+</select>
+</div>
+
+<div class="field">
+<label>Patient Location</label>
+<input type="text" id="patientLocation">
+</div>
+
+</div>
+</div>
+
+
+<!-- VITAL SIGNS -->
+<div class="section">
+<h2>❤️ Vital Signs</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>❤️ Heart Rate (BPM)</label>
+<input type="number" id="heartRate">
+</div>
+
+<div class="field">
+<label>🩸 Blood Pressure (mmHg)</label>
+<input type="text" id="bloodPressure" placeholder="120/80">
+</div>
+
+<div class="field">
+<label>🫁 SpO₂ (%)</label>
+<input type="number" id="spo2">
+</div>
+
+<div class="field">
+<label>Respiratory Rate (Breaths/min)</label>
+<input type="number" id="respiratoryRate">
+</div>
+
+<div class="field">
+<label>🌡️ Temperature (°C)</label>
+<input type="number" step="0.1" id="temperature">
+</div>
+
+<div class="field">
+<label>Blood Glucose (mg/dL)</label>
+<input type="number" id="bloodGlucose">
+</div>
+
+<div class="field">
+<label>GCS Score</label>
+<input type="number" min="3" max="15" id="gcs">
+</div>
+
+</div>
+</div>
+
+
+<!-- MEDICAL HISTORY -->
+<div class="section">
+<h2>🏥 Emergency / Medical History</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Existing Medical Conditions</label>
+<textarea id="medicalConditions"></textarea>
+</div>
+
+<div class="field">
+<label>Allergies</label>
+<textarea id="allergies"></textarea>
+</div>
+
+<div class="field">
+<label>Current Medications</label>
+<textarea id="medications"></textarea>
+</div>
+
+<div class="field">
+<label>Previous Important Medical History</label>
+<textarea id="previousHistory"></textarea>
+</div>
+
+</div>
+</div>
+
+
+<!-- GPS -->
+<div class="section">
+<h2>📍 GPS & Location Data</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Last Known Ambulance Location</label>
+<input type="text" id="ambulanceLocation">
+</div>
+
+<div class="field">
+<label>Patient Location</label>
+<input type="text" id="gpsPatientLocation">
+</div>
+
+<div class="field">
+<label>Selected Hospital</label>
+<input type="text" id="selectedHospital">
+</div>
+
+<div class="field">
+<label>Last Recorded Coordinates</label>
+<input type="text" id="coordinates" placeholder="Latitude, Longitude">
+</div>
+
+</div>
+
+<div class="buttons">
+<button type="button" class="sync-btn" onclick="getGPS()">
+📍 Capture Current GPS
+</button>
+</div>
+
+</div>
+
+
+<!-- HOSPITAL -->
+<div class="section">
+<h2>🏨 Hospital Information</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Hospital Name</label>
+<input type="text" id="hospitalName">
+</div>
+
+<div class="field">
+<label>Hospital Address</label>
+<input type="text" id="hospitalAddress">
+</div>
+
+<div class="field">
+<label>Contact Number</label>
+<input type="tel" id="hospitalContact">
+</div>
+
+<div class="field">
+<label>Distance</label>
+<input type="text" id="hospitalDistance" placeholder="e.g. 5.2 km">
+</div>
+
+<div class="field">
+<label>Selected Hospital for Patient</label>
+<input type="text" id="hospitalSelected">
+</div>
+
+</div>
+</div>
+
+
+<!-- AI ANALYSIS -->
+<div class="section">
+<h2>🤖 AI Analysis / Alerts</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Risk Level</label>
+<select id="riskLevel">
+<option value="">Select Risk</option>
+<option>Low</option>
+<option>Moderate</option>
+<option>High</option>
+<option>Critical</option>
+</select>
+</div>
+
+<div class="field">
+<label>Emergency Priority</label>
+<select id="emergencyPriority">
+<option value="">Select Priority</option>
+<option>Routine</option>
+<option>Urgent</option>
+<option>Emergency</option>
+<option>Critical</option>
+</select>
+</div>
+
+<div class="field">
+<label>Critical Vital Alerts</label>
+<textarea id="criticalAlerts"></textarea>
+</div>
+
+<div class="field">
+<label>AI-Generated Recommendations</label>
+<textarea id="aiRecommendations"></textarea>
+</div>
+
+</div>
+
+<div class="alert">
+⚠️ AI recommendations are decision-support information and should be verified by qualified medical professionals.
+</div>
+
+</div>
+
+
+<!-- ROUTE -->
+<div class="section">
+<h2>🗺️ Route Information</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Last Calculated Route</label>
+<textarea id="lastRoute"
+placeholder="Ambulance → Patient → Hospital"></textarea>
+</div>
+
+<div class="field">
+<label>Estimated Distance</label>
+<input type="text" id="estimatedDistance">
+</div>
+
+<div class="field">
+<label>Estimated Travel Time</label>
+<input type="text" id="estimatedTime">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- EMERGENCY CONTACT -->
+<div class="section">
+<h2>📞 Emergency Contact</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Patient Emergency Contact</label>
+<input type="text" id="emergencyContact">
+</div>
+
+<div class="field">
+<label>Doctor / Hospital Contact Information</label>
+<input type="text" id="doctorContact">
+</div>
+
+</div>
+</div>
+
+
+<!-- ACTIONS -->
+<div class="section">
+
+<h2>🔄 Offline Sync</h2>
+
+<div class="status-box">
+<strong>Storage Status:</strong>
+<span id="storageStatus">Ready to store data offline.</span>
+</div>
+
+<div class="buttons">
+
+<button type="submit" class="save-btn">
+💾 Save Patient Offline
+</button>
+
+<button type="button" class="sync-btn" onclick="syncRecords()">
+🔄 Sync When Internet Returns
+</button>
+
+<button type="button" class="clear-btn" onclick="clearForm()">
+🧹 Clear Form
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+
+<!-- STORED DATA -->
+<div class="section">
+
+<h2>📋 Offline Patient Records</h2>
+
+<div id="records">
+<div class="no-records">
+No offline patient records available.
+</div>
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+Smart Ambulance AI Suite • Emergency Offline Storage System
+</footer>
+
+
+<script>
+
+/* ==============================
+   INDEXED DB
+============================== */
+
+let db;
+
+const request = indexedDB.open("SmartAmbulanceDB", 1);
+
+request.onupgradeneeded = function(event) {
+
+    db = event.target.result;
+
+    if (!db.objectStoreNames.contains("patients")) {
+
+        const store = db.createObjectStore("patients", {
+            keyPath: "id",
+            autoIncrement: true
+        });
+
+        store.createIndex("patientId", "patientId", {
+            unique: false
+        });
+
+        store.createIndex("syncStatus", "syncStatus", {
+            unique: false
+        });
+    }
+};
+
+request.onsuccess = function(event) {
+
+    db = event.target.result;
+
+    displayRecords();
+};
+
+request.onerror = function() {
+
+    document.getElementById("storageStatus").innerText =
+        "Offline storage could not be initialized.";
+};
+
+
+/* ==============================
+   GET FORM DATA
+============================== */
+
+function getFormData() {
+
+    return {
+
+        patientName:
+            document.getElementById("patientName").value,
+
+        patientId:
+            document.getElementById("patientId").value,
+
+        age:
+            document.getElementById("age").value,
+
+        gender:
+            document.getElementById("gender").value,
+
+        emergencyType:
+            document.getElementById("emergencyType").value,
+
+        patientLocation:
+            document.getElementById("patientLocation").value,
+
+
+        // VITALS
+
+        heartRate:
+            document.getElementById("heartRate").value,
+
+        bloodPressure:
+            document.getElementById("bloodPressure").value,
+
+        spo2:
+            document.getElementById("spo2").value,
+
+        respiratoryRate:
+            document.getElementById("respiratoryRate").value,
+
+        temperature:
+            document.getElementById("temperature").value,
+
+        bloodGlucose:
+            document.getElementById("bloodGlucose").value,
+
+        gcs:
+            document.getElementById("gcs").value,
+
+
+        // MEDICAL HISTORY
+
+        medicalConditions:
+            document.getElementById("medicalConditions").value,
+
+        allergies:
+            document.getElementById("allergies").value,
+
+        medications:
+            document.getElementById("medications").value,
+
+        previousHistory:
+            document.getElementById("previousHistory").value,
+
+
+        // GPS
+
+        ambulanceLocation:
+            document.getElementById("ambulanceLocation").value,
+
+        gpsPatientLocation:
+            document.getElementById("gpsPatientLocation").value,
+
+        selectedHospital:
+            document.getElementById("selectedHospital").value,
+
+        coordinates:
+            document.getElementById("coordinates").value,
+
+
+        // HOSPITAL
+
+        hospitalName:
+            document.getElementById("hospitalName").value,
+
+        hospitalAddress:
+            document.getElementById("hospitalAddress").value,
+
+        hospitalContact:
+            document.getElementById("hospitalContact").value,
+
+        hospitalDistance:
+            document.getElementById("hospitalDistance").value,
+
+        hospitalSelected:
+            document.getElementById("hospitalSelected").value,
+
+
+        // AI
+
+        riskLevel:
+            document.getElementById("riskLevel").value,
+
+        criticalAlerts:
+            document.getElementById("criticalAlerts").value,
+
+        aiRecommendations:
+            document.getElementById("aiRecommendations").value,
+
+        emergencyPriority:
+            document.getElementById("emergencyPriority").value,
+
+
+        // ROUTE
+
+        lastRoute:
+            document.getElementById("lastRoute").value,
+
+        estimatedDistance:
+            document.getElementById("estimatedDistance").value,
+
+        estimatedTime:
+            document.getElementById("estimatedTime").value,
+
+
+        // CONTACT
+
+        emergencyContact:
+            document.getElementById("emergencyContact").value,
+
+        doctorContact:
+            document.getElementById("doctorContact").value,
+
+
+        // SYNC
+
+        syncStatus: "Pending Sync",
+
+        createdAt: new Date().toLocaleString()
+    };
+}
+
+
+/* ==============================
+   SAVE OFFLINE
+============================== */
+
+document.getElementById("patientForm")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    if (!db) {
+        alert("Offline database is not ready.");
+        return;
+    }
+
+    const patient = getFormData();
+
+    const transaction =
+        db.transaction(["patients"], "readwrite");
+
+    const store =
+        transaction.objectStore("patients");
+
+    store.add(patient);
+
+    transaction.oncomplete = function() {
+
+        document.getElementById("storageStatus").innerHTML =
+            "✅ Patient data saved securely on this device. <span class='pending'>Pending Sync</span>";
+
+        alert("Patient record saved offline successfully!");
+
+        displayRecords();
+
+        document.getElementById("patientForm").reset();
+    };
+
+});
+
+
+/* ==============================
+   DISPLAY RECORDS
+============================== */
+
+function displayRecords() {
+
+    if (!db) return;
+
+    const transaction =
+        db.transaction(["patients"], "readonly");
+
+    const store =
+        transaction.objectStore("patients");
+
+    const request = store.getAll();
+
+    request.onsuccess = function() {
+
+        const records = request.result;
+
+        const container =
+            document.getElementById("records");
+
+        if (records.length === 0) {
+
+            container.innerHTML =
+                "<div class='no-records'>No offline patient records available.</div>";
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        records.reverse().forEach(function(patient) {
+
+            const record = document.createElement("div");
+
+            record.className = "record";
+
+            record.innerHTML = `
+
+                <div class="record-header">
+
+                    <div>
+                        <h3>👤 ${patient.patientName || "Unknown Patient"}</h3>
+                        <small>
+                        Patient ID: ${patient.patientId || "N/A"}
+                        </small>
+                    </div>
+
+                    <div class="badge">
+                        ${patient.syncStatus}
+                    </div>
+
+                </div>
+
+                <div class="record-grid">
+
+                    <div>
+                        <strong>Age/Gender:</strong><br>
+                        ${patient.age || "N/A"} /
+                        ${patient.gender || "N/A"}
+                    </div>
+
+                    <div>
+                        <strong>Emergency:</strong><br>
+                        ${patient.emergencyType || "N/A"}
+                    </div>
+
+                    <div>
+                        <strong>❤️ Heart Rate:</strong><br>
+                        ${patient.heartRate || "N/A"} BPM
+                    </div>
+
+                    <div>
+                        <strong>🩸 BP:</strong><br>
+                        ${patient.bloodPressure || "N/A"}
+                    </div>
+
+                    <div>
+                        <strong>🫁 SpO₂:</strong><br>
+                        ${patient.spo2 || "N/A"} %
+                    </div>
+
+                    <div>
+                        <strong>Respiratory Rate:</strong><br>
+                        ${patient.respiratoryRate || "N/A"}
+                    </div>
+
+                    <div>
+                        <strong>🌡️ Temperature:</strong><br>
+                        ${patient.temperature || "N/A"} °C
+                    </div>
+
+                    <div>
+                        <strong>GCS:</strong><br>
+                        ${patient.gcs || "N/A"}
+                    </div>
+
+                    <div>
+                        <strong>Risk Level:</strong><br>
+                        ${patient.riskLevel || "N/A"}
+                    </div>
+
+                    <div>
+                        <strong>Priority:</strong><br>
+                        ${patient.emergencyPriority || "N/A"}
+                    </div>
+
+                    <div>
+                        <strong>🏨 Hospital:</strong><br>
+                        ${patient.hospitalName || "N/A"}
+                    </div>
+
+                    <div>
+                        <strong>📍 Coordinates:</strong><br>
+                        ${patient.coordinates || "N/A"}
+                    </div>
+
+                </div>
+
+                <br>
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteRecord(${patient.id})">
+                    🗑 Delete Record
+                </button>
+
+            `;
+
+            container.appendChild(record);
+        });
+    };
+}
+
+
+/* ==============================
+   DELETE RECORD
+============================== */
+
+function deleteRecord(id) {
+
+    if (!confirm("Delete this patient record?")) {
+        return;
+    }
+
+    const transaction =
+        db.transaction(["patients"], "readwrite");
+
+    const store =
+        transaction.objectStore("patients");
+
+    store.delete(id);
+
+    transaction.oncomplete = function() {
+
+        displayRecords();
+
+    };
+}
+
+
+/* ==============================
+   GPS
+============================== */
+
+function getGPS() {
+
+    if (!navigator.geolocation) {
+
+        alert("GPS is not supported by this browser.");
+
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude =
+                position.coords.latitude;
+
+            const longitude =
+                position.coords.longitude;
+
+            document.getElementById("coordinates").value =
+                latitude + ", " + longitude;
+
+            document.getElementById("ambulanceLocation").value =
+                latitude + ", " + longitude;
+
+            alert("📍 Current GPS location captured!");
+
+        },
+
+        function() {
+
+            alert(
+                "Unable to get GPS location. Please allow location permission."
+            );
+
+        }
+
+    );
+}
+
+
+/* ==============================
+   INTERNET STATUS
+============================== */
+
+function updateConnectionStatus() {
+
+    const status =
+        document.getElementById("connectionStatus");
+
+    if (navigator.onLine) {
+
+        status.innerHTML = "🟢 Online";
+
+        status.style.background = "#16a34a";
+
+    } else {
+
+        status.innerHTML = "🔴 Offline";
+
+        status.style.background = "#dc2626";
+    }
+}
+
+window.addEventListener("online", function() {
+
+    updateConnectionStatus();
+
+    syncRecords();
+
+});
+
+window.addEventListener("offline", function() {
+
+    updateConnectionStatus();
+
+});
+
+updateConnectionStatus();
+
+
+/* ==============================
+   SYNC RECORDS
+============================== */
+
+function syncRecords() {
+
+    if (!navigator.onLine) {
+
+        alert(
+            "🔴 Internet is unavailable. Data will remain stored offline."
+        );
+
+        return;
+    }
+
+    const transaction =
+        db.transaction(["patients"], "readwrite");
+
+    const store =
+        transaction.objectStore("patients");
+
+    const request =
+        store.getAll();
+
+    request.onsuccess = function() {
+
+        const records = request.result;
+
+        let pending = records.filter(
+            patient => patient.syncStatus === "Pending Sync"
+        );
+
+        if (pending.length === 0) {
+
+            alert("✅ All records are already synced.");
+
+            return;
+        }
+
+        /*
+          DEMO SYNC
+
+          In your real hackathon project,
+          replace this section with:
+
+          fetch("YOUR_SERVER_API", {
+              method: "POST",
+              body: JSON.stringify(patient)
+          })
+
+          After successful server response:
+          patient.syncStatus = "Synced";
+        */
+
+        pending.forEach(function(patient) {
+
+            patient.syncStatus = "Synced";
+
+            store.put(patient);
+
+        });
+
+        transaction.oncomplete = function() {
+
+            document.getElementById("storageStatus").innerHTML =
+                "✅ All stored records synced successfully.";
+
+            displayRecords();
+
+            alert(
+                "🔄 " +
+                pending.length +
+                " patient record(s) synced successfully!"
+            );
+        };
+    };
+}
+
+
+/* ==============================
+   CLEAR FORM
+============================== */
+
+function clearForm() {
+
+    document.getElementById("patientForm").reset();
+
+    document.getElementById("storageStatus").innerText =
+        "Form cleared. Offline storage is still available.";
+}
+
+</script>
+
+</body>
+</html>

@@ -14,6 +14,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import numpy as np
+# pyrefly: ignore [missing-import]
 import pytest
 from PIL import Image
 

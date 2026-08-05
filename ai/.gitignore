@@ -1,0 +1,15 @@
+# Dataset images
+dataset/
+datasets/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env
+
+# TensorFlow checkpoints/logs
+logs/
+*.log

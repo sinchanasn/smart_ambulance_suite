@@ -1,0 +1,17 @@
+{
+    "0": {
+        "label": "normal",
+        "display": "Normal",
+        "message": "No significant ECG abnormality detected. Routine monitoring recommended."
+    },
+    "1": {
+        "label": "possible_stemi",
+        "display": "Possible STEMI",
+        "message": "Signs of possible ST-elevation myocardial infarction detected. Immediate cardiologist intervention required."
+    },
+    "2": {
+        "label": "needs_review",
+        "display": "Needs Cardiologist Review",
+        "message": "Abnormal ECG pattern detected. Requires urgent cardiologist review before treatment."
+    }
+}

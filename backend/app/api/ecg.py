@@ -11,6 +11,11 @@ from app.database.connection import get_db
 from app.database.models import ECG, Patient
 from app.database.schemas import ECGResponse, ECGUploadResponse
 
+# AI Integration: import the isolated AI service client.
+# This is the ONLY import needed to enable AI predictions on ECG uploads.
+# The ai_client module handles all HTTP communication with the AI microservice.
+from app.services.ai_client import call_ai_predict
+
 router = APIRouter(prefix="/ecg", tags=["ecg"])
 
 UPLOAD_DIR = "uploads/ecg"
@@ -68,10 +73,31 @@ async def upload_ecg(
     db.commit()
     db.refresh(new_ecg)
 
+    # -----------------------------------------------------------------------
+    # AI INTEGRATION POINT
+    # After persisting the ECG record, call the AI microservice to classify
+    # the uploaded image.  If the AI service is unavailable or returns an
+    # error, prediction will be None and the upload still succeeds.
+    # The prediction result is written back to the same ECG record.
+    # -----------------------------------------------------------------------
+    prediction_result = await call_ai_predict(contents, file.filename or "ecg.png")
+    if prediction_result:
+        new_ecg.prediction = prediction_result.get("prediction")
+        new_ecg.confidence = prediction_result.get("confidence")
+        new_ecg.status = "ANALYSED"
+        db.commit()
+        db.refresh(new_ecg)
+    # -----------------------------------------------------------------------
+    # END AI INTEGRATION POINT
+    # -----------------------------------------------------------------------
+
     return ECGUploadResponse(
         message="ECG scan uploaded successfully",
         patient_id=patient_id,
+        ecg_id=new_ecg.id,
         image_path=new_ecg.image_path,
+        prediction=new_ecg.prediction,
+        confidence=new_ecg.confidence,
         status=new_ecg.status,
     )
 
@@ -88,7 +114,7 @@ async def get_latest_ecg(patient_id: int, db: Session = Depends(get_db)):
     latest = (
         db.query(ECG)
         .filter(ECG.patient_id == patient_id)
-        .order_by(ECG.timestamp.desc())
+        .order_by(ECG.uploaded_at.desc())
         .first()
     )
     if latest is None:

@@ -1,0 +1,5 @@
+# Dataset directory placeholder
+# Place training images in subdirectories:
+#   dataset/Normal/
+#   dataset/Possible_STEMI/
+#   dataset/Needs_Cardiologist_Review/

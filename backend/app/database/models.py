@@ -51,8 +51,10 @@ class ECG(Base):
     id = Column(Integer, primary_key=True, index=True)
     patient_id = Column(Integer, ForeignKey("patients.id", ondelete="CASCADE"), nullable=False)
     image_path = Column(String(255), nullable=True)       # Path to uploaded ECG image scan
+    original_filename = Column(String(255), nullable=True)  # Original uploaded filename
     prediction = Column(String(100), nullable=True)       # AI-inferred rhythm/condition label
     confidence = Column(Float, nullable=True)             # AI prediction confidence score
+    status = Column(String(50), default="UPLOADED")       # UPLOADED | ANALYSED | FAILED
     doctor_review = Column(Text, nullable=True)            # Clinician's review/annotation
     uploaded_at = Column(DateTime, default=datetime.utcnow)
 

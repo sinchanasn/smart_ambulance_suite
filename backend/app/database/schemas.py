@@ -82,14 +82,22 @@ class ECGCreate(ECGBase):
 class ECGResponse(ECGBase):
     id: int
     image_path: Optional[str] = None
-    timestamp: datetime
+    prediction: Optional[str] = None
+    confidence: Optional[float] = None
+    uploaded_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 
 class ECGUploadResponse(BaseModel):
     message: str
+    patient_id: int
     ecg_id: int
     image_path: Optional[str] = None
+    # AI prediction fields — populated if the AI service was reachable.
+    # None if the AI service was unavailable at upload time.
+    prediction: Optional[str] = None
+    confidence: Optional[float] = None
+    status: Optional[str] = None
 
 
 # -------------------------

@@ -98,6 +98,7 @@ def _load_pil_rgb(image_bytes: bytes) -> Image.Image:
 def _try_import_cv2():
     """Lazily import OpenCV; return None if not installed."""
     try:
+        # pyrefly: ignore [missing-import]
         import cv2  # noqa: PLC0415
         return cv2
     except ImportError:

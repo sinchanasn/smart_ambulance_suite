@@ -30,6 +30,7 @@ test_data = test_gen.flow_from_directory(
 
 print(train_data.class_indices)
 
+# pyrefly: ignore [missing-import]
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout

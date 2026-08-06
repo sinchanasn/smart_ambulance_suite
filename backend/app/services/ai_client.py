@@ -45,6 +45,7 @@ import logging
 import os
 from typing import Optional
 
+# pyrefly: ignore [missing-import]
 import httpx
 
 logger = logging.getLogger(__name__)

@@ -1,883 +1,884 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Ambulance AI - Offline Storage</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Ambulance AI - Offline Storage</title>
 
-<style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
 
-body {
-    background: #eef7f8;
-    color: #173b4d;
-}
+        body {
+            background: #eef7f8;
+            color: #173b4d;
+        }
 
-/* HEADER */
-header {
-    background: linear-gradient(135deg, #075985, #0f766e);
-    color: white;
-    padding: 20px 35px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-}
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #075985, #0f766e);
+            color: white;
+            padding: 20px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
 
-header h1 {
-    font-size: 25px;
-}
+        header h1 {
+            font-size: 25px;
+        }
 
-header p {
-    margin-top: 5px;
-    font-size: 14px;
-    opacity: 0.9;
-}
+        header p {
+            margin-top: 5px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
 
-.connection {
-    padding: 9px 15px;
-    border-radius: 20px;
-    background: #16a34a;
-    font-weight: bold;
-}
+        .connection {
+            padding: 9px 15px;
+            border-radius: 20px;
+            background: #16a34a;
+            font-weight: bold;
+        }
 
-/* MAIN */
-.container {
-    width: 94%;
-    max-width: 1250px;
-    margin: 25px auto;
-}
+        /* MAIN */
+        .container {
+            width: 94%;
+            max-width: 1250px;
+            margin: 25px auto;
+        }
 
-/* SECTION */
-.section {
-    background: white;
-    margin-bottom: 22px;
-    padding: 22px;
-    border-radius: 14px;
-    border-left: 5px solid #0f766e;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-}
+        /* SECTION */
+        .section {
+            background: white;
+            margin-bottom: 22px;
+            padding: 22px;
+            border-radius: 14px;
+            border-left: 5px solid #0f766e;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
 
-.section h2 {
-    color: #075985;
-    margin-bottom: 18px;
-    font-size: 20px;
-}
+        .section h2 {
+            color: #075985;
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-}
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
 
-.field {
-    display: flex;
-    flex-direction: column;
-}
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
 
-label {
-    font-weight: bold;
-    margin-bottom: 6px;
-    color: #31586b;
-    font-size: 14px;
-}
+        label {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #31586b;
+            font-size: 14px;
+        }
 
-input,
-select,
-textarea {
-    padding: 11px;
-    border: 1px solid #b7d4dc;
-    border-radius: 8px;
-    outline: none;
-    font-size: 14px;
-}
+        input,
+        select,
+        textarea {
+            padding: 11px;
+            border: 1px solid #b7d4dc;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
 
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: #0f766e;
-    box-shadow: 0 0 4px rgba(15,118,110,0.3);
-}
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #0f766e;
+            box-shadow: 0 0 4px rgba(15, 118, 110, 0.3);
+        }
 
-textarea {
-    min-height: 80px;
-    resize: vertical;
-}
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
 
-/* BUTTONS */
-.buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 20px;
-}
+        /* BUTTONS */
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
 
-button {
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-    font-size: 14px;
-}
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+        }
 
-.save-btn {
-    background: #0f766e;
-}
+        .save-btn {
+            background: #0f766e;
+        }
 
-.sync-btn {
-    background: #2563eb;
-}
+        .sync-btn {
+            background: #2563eb;
+        }
 
-.clear-btn {
-    background: #64748b;
-}
+        .clear-btn {
+            background: #64748b;
+        }
 
-.delete-btn {
-    background: #dc2626;
-}
+        .delete-btn {
+            background: #dc2626;
+        }
 
-button:hover {
-    opacity: 0.88;
-}
+        button:hover {
+            opacity: 0.88;
+        }
 
-/* STATUS */
-.status-box {
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 15px;
-    background: #f0fdfa;
-    border: 1px solid #99f6e4;
-}
+        /* STATUS */
+        .status-box {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            background: #f0fdfa;
+            border: 1px solid #99f6e4;
+        }
 
-.pending {
-    color: #b45309;
-    font-weight: bold;
-}
+        .pending {
+            color: #b45309;
+            font-weight: bold;
+        }
 
-.synced {
-    color: #15803d;
-    font-weight: bold;
-}
+        .synced {
+            color: #15803d;
+            font-weight: bold;
+        }
 
-/* ALERT */
-.alert {
-    padding: 13px;
-    border-radius: 8px;
-    margin-top: 10px;
-    background: #fff7ed;
-    border-left: 5px solid #f97316;
-}
+        /* ALERT */
+        .alert {
+            padding: 13px;
+            border-radius: 8px;
+            margin-top: 10px;
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+        }
 
-/* STORED RECORDS */
-.record {
-    background: #f8fafc;
-    border: 1px solid #d5e3e8;
-    border-radius: 12px;
-    padding: 18px;
-    margin-top: 15px;
-}
+        /* STORED RECORDS */
+        .record {
+            background: #f8fafc;
+            border: 1px solid #d5e3e8;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 15px;
+        }
 
-.record-header {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 12px;
-}
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
 
-.record h3 {
-    color: #075985;
-}
+        .record h3 {
+            color: #075985;
+        }
 
-.badge {
-    padding: 5px 10px;
-    border-radius: 15px;
-    background: #fef3c7;
-    color: #92400e;
-    font-size: 12px;
-    font-weight: bold;
-}
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 12px;
+            font-weight: bold;
+        }
 
-.record-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 10px;
-    font-size: 14px;
-}
+        .record-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 10px;
+            font-size: 14px;
+        }
 
-.record-grid div {
-    background: white;
-    padding: 9px;
-    border-radius: 7px;
-}
+        .record-grid div {
+            background: white;
+            padding: 9px;
+            border-radius: 7px;
+        }
 
-.no-records {
-    text-align: center;
-    padding: 25px;
-    color: #64748b;
-}
+        .no-records {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
 
-/* FOOTER */
-footer {
-    text-align: center;
-    padding: 20px;
-    color: #64748b;
-    font-size: 13px;
-}
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 13px;
+        }
 
-@media(max-width:600px) {
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
+        @media(max-width:600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
 
-    .container {
-        width: 96%;
-    }
-}
-</style>
+            .container {
+                width: 96%;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header>
-    <div>
-        <h1>🚑 Smart Ambulance AI Suite</h1>
-        <p>Offline Emergency Patient Storage</p>
+    <header>
+        <div>
+            <h1>🚑 Smart Ambulance AI Suite</h1>
+            <p>Offline Emergency Patient Storage</p>
+        </div>
+
+        <div class="connection" id="connectionStatus">
+            🟢 Online
+        </div>
+    </header>
+
+
+    <div class="container">
+
+        <form id="patientForm">
+
+            <!-- PATIENT DETAILS -->
+            <div class="section">
+                <h2>👤 Patient Details</h2>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>Patient Name</label>
+                        <input type="text" id="patientName" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Patient ID</label>
+                        <input type="text" id="patientId" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Age</label>
+                        <input type="number" id="age">
+                    </div>
+
+                    <div class="field">
+                        <label>Gender</label>
+                        <select id="gender">
+                            <option value="">Select</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Emergency Type</label>
+                        <select id="emergencyType">
+                            <option value="">Select</option>
+                            <option>Cardiac Emergency</option>
+                            <option>Accident / Trauma</option>
+                            <option>Breathing Difficulty</option>
+                            <option>Stroke</option>
+                            <option>Unconscious</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Patient Location</label>
+                        <input type="text" id="patientLocation">
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- VITAL SIGNS -->
+            <div class="section">
+                <h2>❤️ Vital Signs</h2>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>❤️ Heart Rate (BPM)</label>
+                        <input type="number" id="heartRate">
+                    </div>
+
+                    <div class="field">
+                        <label>🩸 Blood Pressure (mmHg)</label>
+                        <input type="text" id="bloodPressure" placeholder="120/80">
+                    </div>
+
+                    <div class="field">
+                        <label>🫁 SpO₂ (%)</label>
+                        <input type="number" id="spo2">
+                    </div>
+
+                    <div class="field">
+                        <label>Respiratory Rate (Breaths/min)</label>
+                        <input type="number" id="respiratoryRate">
+                    </div>
+
+                    <div class="field">
+                        <label>🌡️ Temperature (°C)</label>
+                        <input type="number" step="0.1" id="temperature">
+                    </div>
+
+                    <div class="field">
+                        <label>Blood Glucose (mg/dL)</label>
+                        <input type="number" id="bloodGlucose">
+                    </div>
+
+                    <div class="field">
+                        <label>GCS Score</label>
+                        <input type="number" min="3" max="15" id="gcs">
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- MEDICAL HISTORY -->
+            <div class="section">
+                <h2>🏥 Emergency / Medical History</h2>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>Existing Medical Conditions</label>
+                        <textarea id="medicalConditions"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label>Allergies</label>
+                        <textarea id="allergies"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label>Current Medications</label>
+                        <textarea id="medications"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label>Previous Important Medical History</label>
+                        <textarea id="previousHistory"></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- GPS -->
+            <div class="section">
+                <h2>📍 GPS & Location Data</h2>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>Last Known Ambulance Location</label>
+                        <input type="text" id="ambulanceLocation">
+                    </div>
+
+                    <div class="field">
+                        <label>Patient Location</label>
+                        <input type="text" id="gpsPatientLocation">
+                    </div>
+
+                    <div class="field">
+                        <label>Selected Hospital</label>
+                        <input type="text" id="selectedHospital">
+                    </div>
+
+                    <div class="field">
+                        <label>Last Recorded Coordinates</label>
+                        <input type="text" id="coordinates" placeholder="Latitude, Longitude">
+                    </div>
+
+                </div>
+
+                <div class="buttons">
+                    <button type="button" class="sync-btn" onclick="getGPS()">
+                        📍 Capture Current GPS
+                    </button>
+                </div>
+
+            </div>
+
+
+            <!-- HOSPITAL -->
+            <div class="section">
+                <h2>🏨 Hospital Information</h2>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>Hospital Name</label>
+                        <input type="text" id="hospitalName">
+                    </div>
+
+                    <div class="field">
+                        <label>Hospital Address</label>
+                        <input type="text" id="hospitalAddress">
+                    </div>
+
+                    <div class="field">
+                        <label>Contact Number</label>
+                        <input type="tel" id="hospitalContact">
+                    </div>
+
+                    <div class="field">
+                        <label>Distance</label>
+                        <input type="text" id="hospitalDistance" placeholder="e.g. 5.2 km">
+                    </div>
+
+                    <div class="field">
+                        <label>Selected Hospital for Patient</label>
+                        <input type="text" id="hospitalSelected">
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- AI ANALYSIS -->
+            <div class="section">
+                <h2>🤖 AI Analysis / Alerts</h2>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>Risk Level</label>
+                        <select id="riskLevel">
+                            <option value="">Select Risk</option>
+                            <option>Low</option>
+                            <option>Moderate</option>
+                            <option>High</option>
+                            <option>Critical</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Emergency Priority</label>
+                        <select id="emergencyPriority">
+                            <option value="">Select Priority</option>
+                            <option>Routine</option>
+                            <option>Urgent</option>
+                            <option>Emergency</option>
+                            <option>Critical</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Critical Vital Alerts</label>
+                        <textarea id="criticalAlerts"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label>AI-Generated Recommendations</label>
+                        <textarea id="aiRecommendations"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="alert">
+                    ⚠️ AI recommendations are decision-support information and should be verified by qualified medical
+                    professionals.
+                </div>
+
+            </div>
+
+
+            <!-- ROUTE -->
+            <div class="section">
+                <h2>🗺️ Route Information</h2>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>Last Calculated Route</label>
+                        <textarea id="lastRoute" placeholder="Ambulance → Patient → Hospital"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label>Estimated Distance</label>
+                        <input type="text" id="estimatedDistance">
+                    </div>
+
+                    <div class="field">
+                        <label>Estimated Travel Time</label>
+                        <input type="text" id="estimatedTime">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EMERGENCY CONTACT -->
+            <div class="section">
+                <h2>📞 Emergency Contact</h2>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>Patient Emergency Contact</label>
+                        <input type="text" id="emergencyContact">
+                    </div>
+
+                    <div class="field">
+                        <label>Doctor / Hospital Contact Information</label>
+                        <input type="text" id="doctorContact">
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- ACTIONS -->
+            <div class="section">
+
+                <h2>🔄 Offline Sync</h2>
+
+                <div class="status-box">
+                    <strong>Storage Status:</strong>
+                    <span id="storageStatus">Ready to store data offline.</span>
+                </div>
+
+                <div class="buttons">
+
+                    <button type="submit" class="save-btn">
+                        💾 Save Patient Offline
+                    </button>
+
+                    <button type="button" class="sync-btn" onclick="syncRecords()">
+                        🔄 Sync When Internet Returns
+                    </button>
+
+                    <button type="button" class="clear-btn" onclick="clearForm()">
+                        🧹 Clear Form
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <!-- STORED DATA -->
+        <div class="section">
+
+            <h2>📋 Offline Patient Records</h2>
+
+            <div id="records">
+                <div class="no-records">
+                    No offline patient records available.
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="connection" id="connectionStatus">
-        🟢 Online
-    </div>
-</header>
-
-
-<div class="container">
-
-<form id="patientForm">
-
-<!-- PATIENT DETAILS -->
-<div class="section">
-<h2>👤 Patient Details</h2>
-
-<div class="grid">
-
-<div class="field">
-<label>Patient Name</label>
-<input type="text" id="patientName" required>
-</div>
-
-<div class="field">
-<label>Patient ID</label>
-<input type="text" id="patientId" required>
-</div>
-
-<div class="field">
-<label>Age</label>
-<input type="number" id="age">
-</div>
-
-<div class="field">
-<label>Gender</label>
-<select id="gender">
-<option value="">Select</option>
-<option>Male</option>
-<option>Female</option>
-<option>Other</option>
-</select>
-</div>
-
-<div class="field">
-<label>Emergency Type</label>
-<select id="emergencyType">
-<option value="">Select</option>
-<option>Cardiac Emergency</option>
-<option>Accident / Trauma</option>
-<option>Breathing Difficulty</option>
-<option>Stroke</option>
-<option>Unconscious</option>
-<option>Other</option>
-</select>
-</div>
-
-<div class="field">
-<label>Patient Location</label>
-<input type="text" id="patientLocation">
-</div>
-
-</div>
-</div>
-
-
-<!-- VITAL SIGNS -->
-<div class="section">
-<h2>❤️ Vital Signs</h2>
-
-<div class="grid">
-
-<div class="field">
-<label>❤️ Heart Rate (BPM)</label>
-<input type="number" id="heartRate">
-</div>
-
-<div class="field">
-<label>🩸 Blood Pressure (mmHg)</label>
-<input type="text" id="bloodPressure" placeholder="120/80">
-</div>
-
-<div class="field">
-<label>🫁 SpO₂ (%)</label>
-<input type="number" id="spo2">
-</div>
-
-<div class="field">
-<label>Respiratory Rate (Breaths/min)</label>
-<input type="number" id="respiratoryRate">
-</div>
-
-<div class="field">
-<label>🌡️ Temperature (°C)</label>
-<input type="number" step="0.1" id="temperature">
-</div>
-
-<div class="field">
-<label>Blood Glucose (mg/dL)</label>
-<input type="number" id="bloodGlucose">
-</div>
-
-<div class="field">
-<label>GCS Score</label>
-<input type="number" min="3" max="15" id="gcs">
-</div>
 
-</div>
-</div>
+    <footer>
+        Smart Ambulance AI Suite • Emergency Offline Storage System
+    </footer>
 
 
-<!-- MEDICAL HISTORY -->
-<div class="section">
-<h2>🏥 Emergency / Medical History</h2>
+    <script>
 
-<div class="grid">
+        /* ==============================
+           INDEXED DB
+        ============================== */
 
-<div class="field">
-<label>Existing Medical Conditions</label>
-<textarea id="medicalConditions"></textarea>
-</div>
+        let db;
 
-<div class="field">
-<label>Allergies</label>
-<textarea id="allergies"></textarea>
-</div>
+        const request = indexedDB.open("SmartAmbulanceDB", 1);
 
-<div class="field">
-<label>Current Medications</label>
-<textarea id="medications"></textarea>
-</div>
+        request.onupgradeneeded = function (event) {
 
-<div class="field">
-<label>Previous Important Medical History</label>
-<textarea id="previousHistory"></textarea>
-</div>
-
-</div>
-</div>
-
-
-<!-- GPS -->
-<div class="section">
-<h2>📍 GPS & Location Data</h2>
-
-<div class="grid">
-
-<div class="field">
-<label>Last Known Ambulance Location</label>
-<input type="text" id="ambulanceLocation">
-</div>
-
-<div class="field">
-<label>Patient Location</label>
-<input type="text" id="gpsPatientLocation">
-</div>
-
-<div class="field">
-<label>Selected Hospital</label>
-<input type="text" id="selectedHospital">
-</div>
+            db = event.target.result;
 
-<div class="field">
-<label>Last Recorded Coordinates</label>
-<input type="text" id="coordinates" placeholder="Latitude, Longitude">
-</div>
+            if (!db.objectStoreNames.contains("patients")) {
 
-</div>
+                const store = db.createObjectStore("patients", {
+                    keyPath: "id",
+                    autoIncrement: true
+                });
 
-<div class="buttons">
-<button type="button" class="sync-btn" onclick="getGPS()">
-📍 Capture Current GPS
-</button>
-</div>
+                store.createIndex("patientId", "patientId", {
+                    unique: false
+                });
 
-</div>
-
+                store.createIndex("syncStatus", "syncStatus", {
+                    unique: false
+                });
+            }
+        };
 
-<!-- HOSPITAL -->
-<div class="section">
-<h2>🏨 Hospital Information</h2>
-
-<div class="grid">
+        request.onsuccess = function (event) {
 
-<div class="field">
-<label>Hospital Name</label>
-<input type="text" id="hospitalName">
-</div>
+            db = event.target.result;
 
-<div class="field">
-<label>Hospital Address</label>
-<input type="text" id="hospitalAddress">
-</div>
+            displayRecords();
+        };
 
-<div class="field">
-<label>Contact Number</label>
-<input type="tel" id="hospitalContact">
-</div>
+        request.onerror = function () {
 
-<div class="field">
-<label>Distance</label>
-<input type="text" id="hospitalDistance" placeholder="e.g. 5.2 km">
-</div>
+            document.getElementById("storageStatus").innerText =
+                "Offline storage could not be initialized.";
+        };
 
-<div class="field">
-<label>Selected Hospital for Patient</label>
-<input type="text" id="hospitalSelected">
-</div>
 
-</div>
-</div>
+        /* ==============================
+           GET FORM DATA
+        ============================== */
 
+        function getFormData() {
 
-<!-- AI ANALYSIS -->
-<div class="section">
-<h2>🤖 AI Analysis / Alerts</h2>
+            return {
 
-<div class="grid">
+                patientName:
+                    document.getElementById("patientName").value,
 
-<div class="field">
-<label>Risk Level</label>
-<select id="riskLevel">
-<option value="">Select Risk</option>
-<option>Low</option>
-<option>Moderate</option>
-<option>High</option>
-<option>Critical</option>
-</select>
-</div>
+                patientId:
+                    document.getElementById("patientId").value,
 
-<div class="field">
-<label>Emergency Priority</label>
-<select id="emergencyPriority">
-<option value="">Select Priority</option>
-<option>Routine</option>
-<option>Urgent</option>
-<option>Emergency</option>
-<option>Critical</option>
-</select>
-</div>
+                age:
+                    document.getElementById("age").value,
 
-<div class="field">
-<label>Critical Vital Alerts</label>
-<textarea id="criticalAlerts"></textarea>
-</div>
+                gender:
+                    document.getElementById("gender").value,
 
-<div class="field">
-<label>AI-Generated Recommendations</label>
-<textarea id="aiRecommendations"></textarea>
-</div>
+                emergencyType:
+                    document.getElementById("emergencyType").value,
 
-</div>
+                patientLocation:
+                    document.getElementById("patientLocation").value,
 
-<div class="alert">
-⚠️ AI recommendations are decision-support information and should be verified by qualified medical professionals.
-</div>
 
-</div>
+                // VITALS
 
+                heartRate:
+                    document.getElementById("heartRate").value,
 
-<!-- ROUTE -->
-<div class="section">
-<h2>🗺️ Route Information</h2>
+                bloodPressure:
+                    document.getElementById("bloodPressure").value,
 
-<div class="grid">
+                spo2:
+                    document.getElementById("spo2").value,
 
-<div class="field">
-<label>Last Calculated Route</label>
-<textarea id="lastRoute"
-placeholder="Ambulance → Patient → Hospital"></textarea>
-</div>
+                respiratoryRate:
+                    document.getElementById("respiratoryRate").value,
 
-<div class="field">
-<label>Estimated Distance</label>
-<input type="text" id="estimatedDistance">
-</div>
+                temperature:
+                    document.getElementById("temperature").value,
 
-<div class="field">
-<label>Estimated Travel Time</label>
-<input type="text" id="estimatedTime">
-</div>
+                bloodGlucose:
+                    document.getElementById("bloodGlucose").value,
 
-</div>
+                gcs:
+                    document.getElementById("gcs").value,
 
-</div>
 
+                // MEDICAL HISTORY
 
-<!-- EMERGENCY CONTACT -->
-<div class="section">
-<h2>📞 Emergency Contact</h2>
+                medicalConditions:
+                    document.getElementById("medicalConditions").value,
 
-<div class="grid">
+                allergies:
+                    document.getElementById("allergies").value,
 
-<div class="field">
-<label>Patient Emergency Contact</label>
-<input type="text" id="emergencyContact">
-</div>
+                medications:
+                    document.getElementById("medications").value,
 
-<div class="field">
-<label>Doctor / Hospital Contact Information</label>
-<input type="text" id="doctorContact">
-</div>
+                previousHistory:
+                    document.getElementById("previousHistory").value,
 
-</div>
-</div>
 
+                // GPS
 
-<!-- ACTIONS -->
-<div class="section">
+                ambulanceLocation:
+                    document.getElementById("ambulanceLocation").value,
 
-<h2>🔄 Offline Sync</h2>
+                gpsPatientLocation:
+                    document.getElementById("gpsPatientLocation").value,
 
-<div class="status-box">
-<strong>Storage Status:</strong>
-<span id="storageStatus">Ready to store data offline.</span>
-</div>
+                selectedHospital:
+                    document.getElementById("selectedHospital").value,
 
-<div class="buttons">
+                coordinates:
+                    document.getElementById("coordinates").value,
 
-<button type="submit" class="save-btn">
-💾 Save Patient Offline
-</button>
 
-<button type="button" class="sync-btn" onclick="syncRecords()">
-🔄 Sync When Internet Returns
-</button>
+                // HOSPITAL
 
-<button type="button" class="clear-btn" onclick="clearForm()">
-🧹 Clear Form
-</button>
+                hospitalName:
+                    document.getElementById("hospitalName").value,
 
-</div>
+                hospitalAddress:
+                    document.getElementById("hospitalAddress").value,
 
-</div>
+                hospitalContact:
+                    document.getElementById("hospitalContact").value,
 
-</form>
+                hospitalDistance:
+                    document.getElementById("hospitalDistance").value,
 
+                hospitalSelected:
+                    document.getElementById("hospitalSelected").value,
 
-<!-- STORED DATA -->
-<div class="section">
 
-<h2>📋 Offline Patient Records</h2>
+                // AI
 
-<div id="records">
-<div class="no-records">
-No offline patient records available.
-</div>
-</div>
+                riskLevel:
+                    document.getElementById("riskLevel").value,
 
-</div>
+                criticalAlerts:
+                    document.getElementById("criticalAlerts").value,
 
-</div>
+                aiRecommendations:
+                    document.getElementById("aiRecommendations").value,
 
+                emergencyPriority:
+                    document.getElementById("emergencyPriority").value,
 
-<footer>
-Smart Ambulance AI Suite • Emergency Offline Storage System
-</footer>
 
+                // ROUTE
 
-<script>
+                lastRoute:
+                    document.getElementById("lastRoute").value,
 
-/* ==============================
-   INDEXED DB
-============================== */
+                estimatedDistance:
+                    document.getElementById("estimatedDistance").value,
 
-let db;
+                estimatedTime:
+                    document.getElementById("estimatedTime").value,
 
-const request = indexedDB.open("SmartAmbulanceDB", 1);
 
-request.onupgradeneeded = function(event) {
+                // CONTACT
 
-    db = event.target.result;
+                emergencyContact:
+                    document.getElementById("emergencyContact").value,
 
-    if (!db.objectStoreNames.contains("patients")) {
+                doctorContact:
+                    document.getElementById("doctorContact").value,
 
-        const store = db.createObjectStore("patients", {
-            keyPath: "id",
-            autoIncrement: true
-        });
 
-        store.createIndex("patientId", "patientId", {
-            unique: false
-        });
+                // SYNC
 
-        store.createIndex("syncStatus", "syncStatus", {
-            unique: false
-        });
-    }
-};
+                syncStatus: "Pending Sync",
 
-request.onsuccess = function(event) {
-
-    db = event.target.result;
-
-    displayRecords();
-};
-
-request.onerror = function() {
-
-    document.getElementById("storageStatus").innerText =
-        "Offline storage could not be initialized.";
-};
-
-
-/* ==============================
-   GET FORM DATA
-============================== */
-
-function getFormData() {
-
-    return {
-
-        patientName:
-            document.getElementById("patientName").value,
-
-        patientId:
-            document.getElementById("patientId").value,
-
-        age:
-            document.getElementById("age").value,
-
-        gender:
-            document.getElementById("gender").value,
-
-        emergencyType:
-            document.getElementById("emergencyType").value,
-
-        patientLocation:
-            document.getElementById("patientLocation").value,
-
-
-        // VITALS
-
-        heartRate:
-            document.getElementById("heartRate").value,
-
-        bloodPressure:
-            document.getElementById("bloodPressure").value,
-
-        spo2:
-            document.getElementById("spo2").value,
-
-        respiratoryRate:
-            document.getElementById("respiratoryRate").value,
-
-        temperature:
-            document.getElementById("temperature").value,
-
-        bloodGlucose:
-            document.getElementById("bloodGlucose").value,
-
-        gcs:
-            document.getElementById("gcs").value,
-
-
-        // MEDICAL HISTORY
-
-        medicalConditions:
-            document.getElementById("medicalConditions").value,
-
-        allergies:
-            document.getElementById("allergies").value,
-
-        medications:
-            document.getElementById("medications").value,
-
-        previousHistory:
-            document.getElementById("previousHistory").value,
-
-
-        // GPS
-
-        ambulanceLocation:
-            document.getElementById("ambulanceLocation").value,
-
-        gpsPatientLocation:
-            document.getElementById("gpsPatientLocation").value,
-
-        selectedHospital:
-            document.getElementById("selectedHospital").value,
-
-        coordinates:
-            document.getElementById("coordinates").value,
-
-
-        // HOSPITAL
-
-        hospitalName:
-            document.getElementById("hospitalName").value,
-
-        hospitalAddress:
-            document.getElementById("hospitalAddress").value,
-
-        hospitalContact:
-            document.getElementById("hospitalContact").value,
-
-        hospitalDistance:
-            document.getElementById("hospitalDistance").value,
-
-        hospitalSelected:
-            document.getElementById("hospitalSelected").value,
-
-
-        // AI
-
-        riskLevel:
-            document.getElementById("riskLevel").value,
-
-        criticalAlerts:
-            document.getElementById("criticalAlerts").value,
-
-        aiRecommendations:
-            document.getElementById("aiRecommendations").value,
-
-        emergencyPriority:
-            document.getElementById("emergencyPriority").value,
-
-
-        // ROUTE
-
-        lastRoute:
-            document.getElementById("lastRoute").value,
-
-        estimatedDistance:
-            document.getElementById("estimatedDistance").value,
-
-        estimatedTime:
-            document.getElementById("estimatedTime").value,
-
-
-        // CONTACT
-
-        emergencyContact:
-            document.getElementById("emergencyContact").value,
-
-        doctorContact:
-            document.getElementById("doctorContact").value,
-
-
-        // SYNC
-
-        syncStatus: "Pending Sync",
-
-        createdAt: new Date().toLocaleString()
-    };
-}
-
-
-/* ==============================
-   SAVE OFFLINE
-============================== */
-
-document.getElementById("patientForm")
-.addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    if (!db) {
-        alert("Offline database is not ready.");
-        return;
-    }
-
-    const patient = getFormData();
-
-    const transaction =
-        db.transaction(["patients"], "readwrite");
-
-    const store =
-        transaction.objectStore("patients");
-
-    store.add(patient);
-
-    transaction.oncomplete = function() {
-
-        document.getElementById("storageStatus").innerHTML =
-            "✅ Patient data saved securely on this device. <span class='pending'>Pending Sync</span>";
-
-        alert("Patient record saved offline successfully!");
-
-        displayRecords();
-
-        document.getElementById("patientForm").reset();
-    };
-
-});
-
-
-/* ==============================
-   DISPLAY RECORDS
-============================== */
-
-function displayRecords() {
-
-    if (!db) return;
-
-    const transaction =
-        db.transaction(["patients"], "readonly");
-
-    const store =
-        transaction.objectStore("patients");
-
-    const request = store.getAll();
-
-    request.onsuccess = function() {
-
-        const records = request.result;
-
-        const container =
-            document.getElementById("records");
-
-        if (records.length === 0) {
-
-            container.innerHTML =
-                "<div class='no-records'>No offline patient records available.</div>";
-
-            return;
+                createdAt: new Date().toLocaleString()
+            };
         }
 
-        container.innerHTML = "";
 
-        records.reverse().forEach(function(patient) {
+        /* ==============================
+           SAVE OFFLINE
+        ============================== */
 
-            const record = document.createElement("div");
+        document.getElementById("patientForm")
+            .addEventListener("submit", function (event) {
 
-            record.className = "record";
+                event.preventDefault();
 
-            record.innerHTML = `
+                if (!db) {
+                    alert("Offline database is not ready.");
+                    return;
+                }
+
+                const patient = getFormData();
+
+                const transaction =
+                    db.transaction(["patients"], "readwrite");
+
+                const store =
+                    transaction.objectStore("patients");
+
+                store.add(patient);
+
+                transaction.oncomplete = function () {
+
+                    document.getElementById("storageStatus").innerHTML =
+                        "✅ Patient data saved securely on this device. <span class='pending'>Pending Sync</span>";
+
+                    alert("Patient record saved offline successfully!");
+
+                    displayRecords();
+
+                    document.getElementById("patientForm").reset();
+                };
+
+            });
+
+
+        /* ==============================
+           DISPLAY RECORDS
+        ============================== */
+
+        function displayRecords() {
+
+            if (!db) return;
+
+            const transaction =
+                db.transaction(["patients"], "readonly");
+
+            const store =
+                transaction.objectStore("patients");
+
+            const request = store.getAll();
+
+            request.onsuccess = function () {
+
+                const records = request.result;
+
+                const container =
+                    document.getElementById("records");
+
+                if (records.length === 0) {
+
+                    container.innerHTML =
+                        "<div class='no-records'>No offline patient records available.</div>";
+
+                    return;
+                }
+
+                container.innerHTML = "";
+
+                records.reverse().forEach(function (patient) {
+
+                    const record = document.createElement("div");
+
+                    record.className = "record";
+
+                    record.innerHTML = `
 
                 <div class="record-header">
 
@@ -969,215 +970,216 @@ function displayRecords() {
 
             `;
 
-            container.appendChild(record);
-        });
-    };
-}
+                    container.appendChild(record);
+                });
+            };
+        }
 
 
-/* ==============================
-   DELETE RECORD
-============================== */
+        /* ==============================
+           DELETE RECORD
+        ============================== */
 
-function deleteRecord(id) {
+        function deleteRecord(id) {
 
-    if (!confirm("Delete this patient record?")) {
-        return;
-    }
+            if (!confirm("Delete this patient record?")) {
+                return;
+            }
 
-    const transaction =
-        db.transaction(["patients"], "readwrite");
+            const transaction =
+                db.transaction(["patients"], "readwrite");
 
-    const store =
-        transaction.objectStore("patients");
+            const store =
+                transaction.objectStore("patients");
 
-    store.delete(id);
+            store.delete(id);
 
-    transaction.oncomplete = function() {
+            transaction.oncomplete = function () {
 
-        displayRecords();
+                displayRecords();
 
-    };
-}
+            };
+        }
 
 
-/* ==============================
-   GPS
-============================== */
+        /* ==============================
+           GPS
+        ============================== */
 
-function getGPS() {
+        function getGPS() {
 
-    if (!navigator.geolocation) {
+            if (!navigator.geolocation) {
 
-        alert("GPS is not supported by this browser.");
+                alert("GPS is not supported by this browser.");
 
-        return;
-    }
+                return;
+            }
 
-    navigator.geolocation.getCurrentPosition(
+            navigator.geolocation.getCurrentPosition(
 
-        function(position) {
+                function (position) {
 
-            const latitude =
-                position.coords.latitude;
+                    const latitude =
+                        position.coords.latitude;
 
-            const longitude =
-                position.coords.longitude;
+                    const longitude =
+                        position.coords.longitude;
 
-            document.getElementById("coordinates").value =
-                latitude + ", " + longitude;
+                    document.getElementById("coordinates").value =
+                        latitude + ", " + longitude;
 
-            document.getElementById("ambulanceLocation").value =
-                latitude + ", " + longitude;
+                    document.getElementById("ambulanceLocation").value =
+                        latitude + ", " + longitude;
 
-            alert("📍 Current GPS location captured!");
+                    alert("📍 Current GPS location captured!");
 
-        },
+                },
 
-        function() {
+                function () {
 
-            alert(
-                "Unable to get GPS location. Please allow location permission."
+                    alert(
+                        "Unable to get GPS location. Please allow location permission."
+                    );
+
+                }
+
             );
-
         }
 
-    );
-}
 
+        /* ==============================
+           INTERNET STATUS
+        ============================== */
 
-/* ==============================
-   INTERNET STATUS
-============================== */
+        function updateConnectionStatus() {
 
-function updateConnectionStatus() {
+            const status =
+                document.getElementById("connectionStatus");
 
-    const status =
-        document.getElementById("connectionStatus");
+            if (navigator.onLine) {
 
-    if (navigator.onLine) {
+                status.innerHTML = "🟢 Online";
 
-        status.innerHTML = "🟢 Online";
+                status.style.background = "#16a34a";
 
-        status.style.background = "#16a34a";
+            } else {
 
-    } else {
+                status.innerHTML = "🔴 Offline";
 
-        status.innerHTML = "🔴 Offline";
-
-        status.style.background = "#dc2626";
-    }
-}
-
-window.addEventListener("online", function() {
-
-    updateConnectionStatus();
-
-    syncRecords();
-
-});
-
-window.addEventListener("offline", function() {
-
-    updateConnectionStatus();
-
-});
-
-updateConnectionStatus();
-
-
-/* ==============================
-   SYNC RECORDS
-============================== */
-
-function syncRecords() {
-
-    if (!navigator.onLine) {
-
-        alert(
-            "🔴 Internet is unavailable. Data will remain stored offline."
-        );
-
-        return;
-    }
-
-    const transaction =
-        db.transaction(["patients"], "readwrite");
-
-    const store =
-        transaction.objectStore("patients");
-
-    const request =
-        store.getAll();
-
-    request.onsuccess = function() {
-
-        const records = request.result;
-
-        let pending = records.filter(
-            patient => patient.syncStatus === "Pending Sync"
-        );
-
-        if (pending.length === 0) {
-
-            alert("✅ All records are already synced.");
-
-            return;
+                status.style.background = "#dc2626";
+            }
         }
 
-        /*
-          DEMO SYNC
+        window.addEventListener("online", function () {
 
-          In your real hackathon project,
-          replace this section with:
+            updateConnectionStatus();
 
-          fetch("YOUR_SERVER_API", {
-              method: "POST",
-              body: JSON.stringify(patient)
-          })
-
-          After successful server response:
-          patient.syncStatus = "Synced";
-        */
-
-        pending.forEach(function(patient) {
-
-            patient.syncStatus = "Synced";
-
-            store.put(patient);
+            syncRecords();
 
         });
 
-        transaction.oncomplete = function() {
+        window.addEventListener("offline", function () {
 
-            document.getElementById("storageStatus").innerHTML =
-                "✅ All stored records synced successfully.";
+            updateConnectionStatus();
 
-            displayRecords();
+        });
 
-            alert(
-                "🔄 " +
-                pending.length +
-                " patient record(s) synced successfully!"
-            );
-        };
-    };
-}
+        updateConnectionStatus();
 
 
-/* ==============================
-   CLEAR FORM
-============================== */
+        /* ==============================
+           SYNC RECORDS
+        ============================== */
 
-function clearForm() {
+        function syncRecords() {
 
-    document.getElementById("patientForm").reset();
+            if (!navigator.onLine) {
 
-    document.getElementById("storageStatus").innerText =
-        "Form cleared. Offline storage is still available.";
-}
+                alert(
+                    "🔴 Internet is unavailable. Data will remain stored offline."
+                );
 
-</script>
+                return;
+            }
+
+            const transaction =
+                db.transaction(["patients"], "readwrite");
+
+            const store =
+                transaction.objectStore("patients");
+
+            const request =
+                store.getAll();
+
+            request.onsuccess = function () {
+
+                const records = request.result;
+
+                let pending = records.filter(
+                    patient => patient.syncStatus === "Pending Sync"
+                );
+
+                if (pending.length === 0) {
+
+                    alert("✅ All records are already synced.");
+
+                    return;
+                }
+
+                /*
+                  DEMO SYNC
+        
+                  In your real hackathon project,
+                  replace this section with:
+        
+                  fetch("YOUR_SERVER_API", {
+                      method: "POST",
+                      body: JSON.stringify(patient)
+                  })
+        
+                  After successful server response:
+                  patient.syncStatus = "Synced";
+                */
+
+                pending.forEach(function (patient) {
+
+                    patient.syncStatus = "Synced";
+
+                    store.put(patient);
+
+                });
+
+                transaction.oncomplete = function () {
+
+                    document.getElementById("storageStatus").innerHTML =
+                        "✅ All stored records synced successfully.";
+
+                    displayRecords();
+
+                    alert(
+                        "🔄 " +
+                        pending.length +
+                        " patient record(s) synced successfully!"
+                    );
+                };
+            };
+        }
+
+
+        /* ==============================
+           CLEAR FORM
+        ============================== */
+
+        function clearForm() {
+
+            document.getElementById("patientForm").reset();
+
+            document.getElementById("storageStatus").innerText =
+                "Form cleared. Offline storage is still available.";
+        }
+
+    </script>
 
 </body>
+
 </html>

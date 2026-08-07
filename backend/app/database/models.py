@@ -16,7 +16,7 @@ class Patient(Base):
     last_name = Column(String(100), nullable=False)
     age = Column(Integer, nullable=True)
     gender = Column(String(20), nullable=True)
-    triage_priority = Column(String(50), default="Level 2 (Urgent)")
+    triage_priority = Column(String(50), default="YELLOW")
     medical_notes = Column(Text, nullable=True)
     ambulance_id = Column(String(50), nullable=True)
     hospital = Column(String(150), nullable=True)
@@ -24,7 +24,7 @@ class Patient(Base):
 
     # Relationships
     vitals = relationship("Vitals", back_populates="patient", cascade="all, delete-orphan")
-    ecg_records = relationship("ECG", back_populates="patient", cascade="all, delete-orphan")
+    new_ecg = relationship("ECG", back_populates="patient", cascade="all, delete-orphan")
 
 
 class Vitals(Base):
@@ -46,7 +46,7 @@ class Vitals(Base):
 
 class ECG(Base):
     """ECG ORM Model representing uploaded cardiac ECG scans and AI review data."""
-    __tablename__ = "ecg_records"
+    __tablename__ = "new_ecg"
 
     id = Column(Integer, primary_key=True, index=True)
     patient_id = Column(Integer, ForeignKey("patients.id", ondelete="CASCADE"), nullable=False)
@@ -59,4 +59,4 @@ class ECG(Base):
     uploaded_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    patient = relationship("Patient", back_populates="ecg_records")
+    patient = relationship("Patient", back_populates="new_ecg")

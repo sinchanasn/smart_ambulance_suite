@@ -11,6 +11,7 @@ from __future__ import annotations
 import io
 
 import numpy as np
+# pyrefly: ignore [missing-import]
 import pytest
 from PIL import Image
 

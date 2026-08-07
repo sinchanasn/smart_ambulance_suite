@@ -197,6 +197,7 @@ def augment_image_numpy(
 def _numpy_rotate(img: np.ndarray, angle_deg: float) -> np.ndarray:
     """Rotate ``img`` by ``angle_deg`` degrees around its centre."""
     try:
+        # pyrefly: ignore [missing-import]
         import cv2  # noqa: PLC0415
         h, w = img.shape[:2]
         img_uint8 = (img * 255).astype(np.uint8)

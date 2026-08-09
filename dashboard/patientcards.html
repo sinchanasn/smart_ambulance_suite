@@ -1,40 +1,164 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+
+    ```
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Dashboard - Patient Cards</title>
-    <link rel="stylesheet" href="patientcards.css">
+
+    <title>Hospital Dashboard - Patient Overview</title>
+
+    <!-- Main dashboard stylesheet -->
+    <link rel="stylesheet" href="patientcards.css?v=2">
+
+    <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    ```
+
 </head>
+
 <body>
+
+    ```
+    <!-- ==============================
+     HEADER
+=============================== -->
+
     <header class="header">
+
         <div class="header-container">
-            <h1>Hospital Dashboard - Patient Cards</h1>
+
+            <h1>
+                Smart Ambulance
+            </h1>
+
         </div>
+
     </header>
 
-    <main class="main-content">
-        <div class="controls">
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search by Name or ID...">
-            </div>
-            <div class="filter-container">
-                <select id="priorityFilter">
-                    <option value="All">All Priorities</option>
-                    <option value="Critical">Critical</option>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                </select>
-            </div>
-        </div>
 
-        <div id="patientGrid" class="patient-grid">
-            <!-- Patient cards will be injected here by JS -->
-        </div>
+    <!-- ==============================
+     MAIN DASHBOARD
+=============================== -->
+
+    <main class="main-content">
+
+
+        <!-- Dashboard heading -->
+
+        <section class="dashboard-heading">
+
+            <div>
+
+                <p class="eyebrow">
+                    EMERGENCY CARE
+                </p>
+
+                <h1>
+                    Patient Overview
+                </h1>
+
+                <p class="subtitle">
+                    Monitor incoming ambulance patients and their clinical priority.
+                </p>
+
+            </div>
+
+
+            <div class="live-status">
+
+                <span class="live-dot"></span>
+
+                Live
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==============================
+         SEARCH + FILTER
+    =============================== -->
+
+        <section class="controls">
+
+
+            <!-- Search -->
+
+            <div class="search-container">
+
+                <span class="search-icon">
+                    ⌕
+                </span>
+
+                <input type="text" id="searchInput" placeholder="Search patient name or ID..." autocomplete="off">
+
+            </div>
+
+
+
+            <!-- Priority filter -->
+
+            <div class="filter-container">
+
+                <select id="priorityFilter">
+
+                    <option value="All">
+                        All Priorities
+                    </option>
+
+                    <option value="Critical">
+                        Critical
+                    </option>
+
+                    <option value="High">
+                        High
+                    </option>
+
+                    <option value="Medium">
+                        Medium
+                    </option>
+
+                    <option value="Low">
+                        Low
+                    </option>
+
+                </select>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==============================
+         PATIENT GRID
+    =============================== -->
+
+        <section id="patientGrid" class="patient-grid">
+
+            <!--
+            Patient cards are automatically
+            inserted here by patientcards.js.
+        -->
+
+        </section>
+
+
     </main>
 
-    <script src="patientcards.js"></script>
+
+
+    <!-- ==============================
+     JAVASCRIPT
+=============================== -->
+
+    <script src="patientcards.js?v=2"></script>
+    ```
+
 </body>
+
 </html>

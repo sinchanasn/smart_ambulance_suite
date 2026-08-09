@@ -1,53 +1,533 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Ambulance - Login</title>
-    <!-- Google Fonts -->
+
+    <title>Smart Ambulance | Login</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #06141f, #083b4c, #006d77);
+            color: #ffffff;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.97);
+            color: #163b40;
+            border-radius: 22px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #006d77, #00a6b4);
+            color: white;
+            font-size: 30px;
+            box-shadow: 0 8px 20px rgba(0, 109, 119, 0.3);
+        }
+
+        .logo-section h1 {
+            font-size: 27px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .logo-section p {
+            color: #668084;
+            font-size: 14px;
+        }
+
+        .login-form {
+            width: 100%;
+        }
+
+        .error-message {
+            display: none;
+            background: #ffe7e7;
+            color: #c62828;
+            border: 1px solid #ffcaca;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #007f89;
+            z-index: 2;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            height: 52px;
+            border: 1px solid #d7e4e6;
+            border-radius: 12px;
+            padding: 0 15px 0 46px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: #163b40;
+            background: #f8fbfb;
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        .input-group select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #0096a6;
+            box-shadow: 0 0 0 3px rgba(0, 150, 166, 0.1);
+            background: #ffffff;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0 22px;
+            font-size: 13px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            color: #557075;
+        }
+
+        .remember-me input {
+            accent-color: #007f89;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: #007f89;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 54px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #006d77, #0096a6);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 109, 119, 0.25);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .demo-accounts {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e4eeee;
+        }
+
+        .demo-title {
+            text-align: center;
+            font-size: 12px;
+            color: #718589;
+            margin-bottom: 12px;
+        }
+
+        .demo-account {
+            background: #f3f8f8;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #4c666a;
+        }
+
+        .demo-account strong {
+            color: #163b40;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 12px;
+            }
+
+            .login-card {
+                padding: 30px 22px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="icon-container">
-                <i class="fa-solid fa-truck-medical"></i>
-            </div>
-            <h1>Smart Ambulance</h1>
-            <p class="subtitle">Emergency Patient Monitoring System</p>
 
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <!-- LOGO / TITLE -->
+            <div class="logo-section">
+
+                <div class="logo-icon">
+                    <i class="fa-solid fa-truck-medical"></i>
+                </div>
+
+                <h1>Smart Ambulance</h1>
+
+                <p>Emergency Healthcare Coordination System</p>
+
+            </div>
+
+
+            <!-- LOGIN FORM -->
             <form id="loginForm" class="login-form">
+
                 <div class="error-message" id="errorMessage"></div>
 
+
+                <!-- USERNAME -->
                 <div class="input-group">
+
                     <i class="fa-solid fa-user input-icon"></i>
-                    <input type="text" id="username" placeholder="Email / Username" autocomplete="username">
+
+                    <input type="text" id="username" placeholder="Email / Username" autocomplete="username" required>
+
                 </div>
 
+
+                <!-- PASSWORD -->
                 <div class="input-group">
+
                     <i class="fa-solid fa-lock input-icon"></i>
-                    <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+
+                    <input type="password" id="password" placeholder="Password" autocomplete="current-password"
+                        required>
+
                 </div>
 
+
+                <!-- ROLE -->
+                <div class="input-group">
+
+                    <i class="fa-solid fa-user-shield input-icon"></i>
+
+                    <select id="userRole" required>
+
+                        <option value="" disabled selected>
+                            Select your role
+                        </option>
+
+                        <option value="ambulance">
+                            🚑 Ambulance Staff
+                        </option>
+
+                        <option value="doctor">
+                            🏥 Doctor / Hospital Staff
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- REMEMBER ME -->
                 <div class="form-actions">
+
                     <label class="remember-me">
+
                         <input type="checkbox" id="rememberMe">
+
                         <span>Remember Me</span>
+
                     </label>
-                    <a href="#" class="forgot-password">Forgot Password?</a>
+
+                    <a href="#" class="forgot-password" onclick="return false;">
+                        Forgot Password?
+                    </a>
+
                 </div>
 
-                <button type="submit" class="login-button">Login</button>
+
+                <!-- LOGIN BUTTON -->
+                <button type="submit" class="login-button">
+                    Login
+                </button>
+
             </form>
+
+
+            <!-- DEMO ACCOUNTS -->
+            <div class="demo-accounts">
+
+                <div class="demo-title">
+                    Hackathon Demo Accounts
+                </div>
+
+                <div class="demo-account">
+                    🚑 <strong>Ambulance:</strong>
+                    ambulance / ambulance123
+                </div>
+
+                <div class="demo-account">
+                    🏥 <strong>Doctor:</strong>
+                    doctor / doctor123
+                </div>
+
+            </div>
+
         </div>
+
     </div>
 
-    <script src="script.js"></script>
+
+    <script>
+
+        /*
+         * ROLE-BASED LOGIN
+         *
+         * This is currently a FRONTEND DEMO login.
+         * Later we can connect this to your FastAPI backend.
+         */
+
+
+        const loginForm = document.getElementById("loginForm");
+
+        const errorMessage = document.getElementById("errorMessage");
+
+
+        loginForm.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+
+            const username =
+                document.getElementById("username").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            const role =
+                document.getElementById("userRole").value;
+
+            const rememberMe =
+                document.getElementById("rememberMe").checked;
+
+
+            // Hide previous error
+            errorMessage.style.display = "none";
+
+
+            // Check role
+            if (!role) {
+
+                showError("Please select your role.");
+
+                return;
+            }
+
+
+            /*
+             * DEMO CREDENTIALS
+             */
+
+            const ambulanceLogin =
+                username === "ambulance" &&
+                password === "ambulance123" &&
+                role === "ambulance";
+
+
+            const doctorLogin =
+                username === "doctor" &&
+                password === "doctor123" &&
+                role === "doctor";
+
+
+            /*
+             * AMBULANCE LOGIN
+             */
+
+            if (ambulanceLogin) {
+
+                saveLogin("ambulance", username, rememberMe);
+
+                /*
+                 * Ambulance frontend
+                 *
+                 * login.html is inside frontend/
+                 * patient.html is also inside frontend/
+                 */
+
+                window.location.href = "patient.html";
+
+                return;
+            }
+
+
+            /*
+             * DOCTOR LOGIN
+             */
+
+            if (doctorLogin) {
+
+                saveLogin("doctor", username, rememberMe);
+
+                /*
+                 * Hospital dashboard is in the dashboard/
+                 * folder, one level above frontend/
+                 */
+
+                window.location.href =
+                    "../dashboard/Patientcards.html";
+
+                return;
+            }
+
+
+            /*
+             * INVALID LOGIN
+             */
+
+            showError(
+                "Invalid username, password, or role."
+            );
+
+        });
+
+
+        /*
+         * SAVE LOGIN INFORMATION
+         */
+
+        function saveLogin(role, username, rememberMe) {
+
+            const loginData = {
+
+                username: username,
+
+                role: role,
+
+                loggedIn: true,
+
+                loginTime: new Date().toISOString()
+
+            };
+
+
+            /*
+             * sessionStorage:
+             * Login disappears when browser tab is closed.
+             *
+             * localStorage:
+             * Login remains if Remember Me is selected.
+             */
+
+            if (rememberMe) {
+
+                localStorage.setItem(
+                    "smartAmbulanceUser",
+                    JSON.stringify(loginData)
+                );
+
+                sessionStorage.removeItem(
+                    "smartAmbulanceUser"
+                );
+
+            } else {
+
+                sessionStorage.setItem(
+                    "smartAmbulanceUser",
+                    JSON.stringify(loginData)
+                );
+
+                localStorage.removeItem(
+                    "smartAmbulanceUser"
+                );
+
+            }
+
+        }
+
+
+        /*
+         * DISPLAY ERROR
+         */
+
+        function showError(message) {
+
+            errorMessage.textContent = message;
+
+            errorMessage.style.display = "block";
+
+        }
+
+    </script>
+
 </body>
 
 </html>
+```

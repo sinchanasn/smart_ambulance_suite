@@ -1,177 +1,393 @@
-const patients = [
-    {
-        id: "PT-1024",
-        name: "John Smith",
-        age: 64,
-        gender: "Male",
-        heartRate: "115 bpm",
-        bloodPressure: "150/95",
-        spo2: "92%",
-        priority: "Critical",
-        ambulanceNum: "AMB-04",
-        eta: "5 mins",
-        ecgStatus: "Abnormal"
-    },
-    {
-        id: "PT-2051",
-        name: "Sarah Johnson",
-        age: 42,
-        gender: "Female",
-        heartRate: "85 bpm",
-        bloodPressure: "120/80",
-        spo2: "98%",
-        priority: "Medium",
-        ambulanceNum: "AMB-12",
-        eta: "15 mins",
-        ecgStatus: "Normal"
-    },
-    {
-        id: "PT-3092",
-        name: "Robert Davis",
-        age: 78,
-        gender: "Male",
-        heartRate: "58 bpm",
-        bloodPressure: "110/70",
-        spo2: "95%",
-        priority: "High",
-        ambulanceNum: "AMB-02",
-        eta: "8 mins",
-        ecgStatus: "Checking"
-    },
-    {
-        id: "PT-4103",
-        name: "Emily Wilson",
-        age: 25,
-        gender: "Female",
-        heartRate: "72 bpm",
-        bloodPressure: "115/75",
-        spo2: "99%",
-        priority: "Low",
-        ambulanceNum: "AMB-08",
-        eta: "20 mins",
-        ecgStatus: "Normal"
-    },
-    {
-        id: "PT-5120",
-        name: "Michael Brown",
-        age: 55,
-        gender: "Male",
-        heartRate: "130 bpm",
-        bloodPressure: "160/100",
-        spo2: "88%",
-        priority: "Critical",
-        ambulanceNum: "AMB-01",
-        eta: "2 mins",
-        ecgStatus: "Abnormal"
-    },
-    {
-        id: "PT-6244",
-        name: "Jessica Taylor",
-        age: 38,
-        gender: "Female",
-        heartRate: "95 bpm",
-        bloodPressure: "135/85",
-        spo2: "96%",
-        priority: "High",
-        ambulanceNum: "AMB-07",
-        eta: "10 mins",
-        ecgStatus: "Normal"
-    }
-];
+// ============================================================
+// BACKEND URL
+// ============================================================
 
-const patientGrid = document.getElementById('patientGrid');
-const searchInput = document.getElementById('searchInput');
-const priorityFilter = document.getElementById('priorityFilter');
+const BACKEND_URL = "http://127.0.0.1:8000";
 
-function getPriorityClass(priority) {
-    return priority.toLowerCase();
-}
 
-function getEcgStatusClass(status) {
-    return `status-${status.toLowerCase()}`;
-}
+// ============================================================
+// DOM ELEMENTS
+// ============================================================
 
-function renderCards(data) {
-    patientGrid.innerHTML = '';
-    
-    if (data.length === 0) {
-        patientGrid.innerHTML = '<p class="text-muted">No patients found.</p>';
-        return;
+const patientGrid =
+    document.getElementById("patientGrid");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const priorityFilter =
+    document.getElementById("priorityFilter");
+
+let patients = [];
+
+
+// ============================================================
+// LOGIN / ROLE CHECK
+// ============================================================
+
+function getLoggedInUser() {
+
+    const sessionUser =
+        sessionStorage.getItem("smartAmbulanceUser");
+
+    const localUser =
+        localStorage.getItem("smartAmbulanceUser");
+
+    const userData =
+        sessionUser || localUser;
+
+
+    if (!userData) {
+        return null;
     }
 
-    data.forEach(patient => {
-        const card = document.createElement('div');
-        card.className = `patient-card priority-${getPriorityClass(patient.priority)}`;
-        
-        card.innerHTML = `
-            <div class="card-header">
+
+    try {
+
+        return JSON.parse(userData);
+
+    } catch (error) {
+
+        console.error(
+            "Invalid login data:",
+            error
+        );
+
+        return null;
+    }
+}
+
+
+// ============================================================
+// CHECK DOCTOR ROLE
+// ============================================================
+
+const loggedInUser =
+    getLoggedInUser();
+
+
+if (
+    !loggedInUser ||
+    loggedInUser.role !== "doctor"
+) {
+
+    alert(
+        "Access denied. Doctor / Hospital Staff login required."
+    );
+
+    // Clear the invalid session
+    sessionStorage.removeItem(
+        "smartAmbulanceUser"
+    );
+
+    localStorage.removeItem(
+        "smartAmbulanceUser"
+    );
+
+    // Send back to login
+    window.location.replace(
+        "../frontend/login.html"
+    );
+
+} else {
+
+    // ========================================================
+    // FETCH PATIENTS FROM BACKEND
+    // ========================================================
+
+    async function loadPatients() {
+
+        try {
+
+            console.log(
+                "Fetching patients from backend..."
+            );
+
+
+            const response =
+                await fetch(
+                    `${BACKEND_URL}/patient/`
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `Backend returned ${response.status}`
+                );
+
+            }
+
+
+            patients =
+                await response.json();
+
+
+            console.log(
+                "Patients received:",
+                patients
+            );
+
+
+            renderPatients();
+
+
+        } catch (error) {
+
+            console.error(
+                "Failed to load patients:",
+                error
+            );
+
+
+            if (patientGrid) {
+
+                patientGrid.innerHTML = `
+                    <div class="error-message">
+                        Unable to connect to ambulance backend.
+                    </div>
+                `;
+
+            }
+
+        }
+
+    }
+
+
+    // ========================================================
+    // RENDER PATIENT CARDS
+    // ========================================================
+
+    function renderPatients() {
+
+        const searchText =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+
+        const selectedPriority =
+            priorityFilter.value;
+
+
+        const filteredPatients =
+            patients.filter(patient => {
+
+                const fullName =
+                    `${patient.first_name} ${patient.last_name}`
+                        .toLowerCase();
+
+
+                const matchesSearch =
+                    fullName.includes(searchText) ||
+                    String(patient.id)
+                        .includes(searchText);
+
+
+                const matchesPriority =
+                    selectedPriority === "All" ||
+                    getPriority(
+                        patient.triage_priority
+                    )
+                        .toLowerCase() ===
+                    selectedPriority.toLowerCase();
+
+
+                return (
+                    matchesSearch &&
+                    matchesPriority
+                );
+
+            });
+
+
+        patientGrid.innerHTML = "";
+
+
+        if (filteredPatients.length === 0) {
+
+            patientGrid.innerHTML = `
+                <div class="empty-message">
+                    No patients found.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        filteredPatients.forEach(patient => {
+
+            const priority =
+                getPriority(
+                    patient.triage_priority
+                );
+
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                `patient-card priority-${priority.toLowerCase()}`;
+
+
+            card.innerHTML = `
+
+                <div class="patient-card-header">
+
+                    <div>
+
+                        <h3>
+                            ${patient.first_name}
+                            ${patient.last_name}
+                        </h3>
+
+                        <span>
+                            Patient ID: ${patient.id}
+                        </span>
+
+                    </div>
+
+
+                    <span class="priority-badge">
+                        ${priority}
+                    </span>
+
+                </div>
+
+
                 <div class="patient-info">
-                    <h2>${patient.name}</h2>
-                    <span class="patient-id">${patient.id} | ${patient.age} y/o | ${patient.gender}</span>
+
+                    <p>
+                        <strong>Age:</strong>
+                        ${patient.age ?? "N/A"}
+                    </p>
+
+                    <p>
+                        <strong>Gender:</strong>
+                        ${patient.gender ?? "N/A"}
+                    </p>
+
+                    <p>
+                        <strong>Priority:</strong>
+                        ${patient.triage_priority ?? "N/A"}
+                    </p>
+
+                    <p>
+                        <strong>Medical Notes:</strong>
+                        ${patient.medical_notes ?? "None"}
+                    </p>
+
                 </div>
-                <span class="badge ${getPriorityClass(patient.priority)}">${patient.priority}</span>
-            </div>
-            
-            <div class="vitals">
-                <div class="card-body">
-                    <div class="data-item">
-                        <span class="data-label">Heart Rate</span>
-                        <span class="data-value">${patient.heartRate}</span>
-                    </div>
-                    <div class="data-item">
-                        <span class="data-label">SpO₂</span>
-                        <span class="data-value">${patient.spo2}</span>
-                    </div>
-                    <div class="data-item">
-                        <span class="data-label">Blood Pressure</span>
-                        <span class="data-value">${patient.bloodPressure}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card-body">
-                <div class="data-item">
-                    <span class="data-label">Ambulance</span>
-                    <span class="data-value">${patient.ambulanceNum}</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">ETA</span>
-                    <span class="data-value">${patient.eta}</span>
-                </div>
-            </div>
-            
-            <div class="card-footer">
-                <div class="ecg-status">
-                    <span class="status-dot ${getEcgStatusClass(patient.ecgStatus)}"></span>
-                    <span>ECG: ${patient.ecgStatus}</span>
-                </div>
-                <button class="btn-view" onclick="alert('Viewing ECG for ${patient.name}')">View ECG</button>
-            </div>
-        `;
-        
-        patientGrid.appendChild(card);
-    });
+
+
+                <button
+                    class="view-patient-btn"
+                    onclick="viewPatient(${patient.id})">
+
+                    View Patient
+
+                </button>
+
+            `;
+
+
+            patientGrid.appendChild(card);
+
+        });
+
+    }
+
+
+    // ========================================================
+    // PRIORITY CONVERSION
+    // ========================================================
+
+    function getPriority(priority) {
+
+        if (!priority) {
+            return "Medium";
+        }
+
+
+        const value =
+            priority.toLowerCase();
+
+
+        if (
+            value.includes("critical") ||
+            value.includes("level 1")
+        ) {
+
+            return "Critical";
+
+        }
+
+
+        if (
+            value.includes("high") ||
+            value.includes("level 2")
+        ) {
+
+            return "High";
+
+        }
+
+
+        if (
+            value.includes("medium") ||
+            value.includes("level 3")
+        ) {
+
+            return "Medium";
+
+        }
+
+
+        return "Low";
+    }
+
+
+    // ========================================================
+    // VIEW PATIENT
+    // ========================================================
+
+    function viewPatient(patientId) {
+
+        localStorage.setItem(
+            "selectedPatientId",
+            patientId
+        );
+
+
+        window.location.href =
+            `ecgviewer.html?patient_id=${patientId}`;
+
+    }
+
+
+    // ========================================================
+    // SEARCH + FILTER
+    // ========================================================
+
+    searchInput.addEventListener(
+        "input",
+        renderPatients
+    );
+
+
+    priorityFilter.addEventListener(
+        "change",
+        renderPatients
+    );
+
+
+    // ========================================================
+    // INITIAL LOAD
+    // ========================================================
+
+    loadPatients();
+
 }
-
-function filterPatients() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const priorityTerm = priorityFilter.value;
-    
-    const filtered = patients.filter(patient => {
-        const matchesSearch = patient.name.toLowerCase().includes(searchTerm) || 
-                              patient.id.toLowerCase().includes(searchTerm);
-        
-        const matchesPriority = priorityTerm === 'All' || patient.priority === priorityTerm;
-        
-        return matchesSearch && matchesPriority;
-    });
-    
-    renderCards(filtered);
-}
-
-// Event Listeners
-searchInput.addEventListener('input', filterPatients);
-priorityFilter.addEventListener('change', filterPatients);
-
-// Initial Render
-renderCards(patients);

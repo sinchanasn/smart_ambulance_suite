@@ -1,31 +1,1361 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Ambulance - Success</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="icon-container" style="background: linear-gradient(135deg, #c8e6c9, #a5d6a7); color: #2e7d32; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);">
-                <i class="fa-solid fa-check-circle"></i>
-            </div>
-            <h1 style="color: #2e7d32;">Analysis In Progress</h1>
-            <p class="subtitle" style="margin-bottom: 40px;">ECG image uploaded successfully. The AI model is now analyzing the report.</p>
 
-            <div class="form-actions-row">
-                <a href="dashboard.html" class="primary-button action-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%;">
-                    <i class="fa-solid fa-house-medical"></i> Go to Dashboard
-                </a>
+    <title>Smart Ambulance - ECG Analysis</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --card: #ffffff;
+            --text: #172033;
+            --muted: #667085;
+            --border: #e4e7ec;
+            --primary: #1769e0;
+            --primary-dark: #0f4fae;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --shadow: 0 12px 35px rgba(16, 24, 40, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .page {
+            max-width: 1400px;
+            margin: auto;
+            padding: 25px;
+        }
+
+        /* HEADER */
+
+        .topbar {
+            background: linear-gradient(135deg,
+                    #0b4da2,
+                    #1769e0);
+
+            color: white;
+            border-radius: 18px;
+            padding: 24px 28px;
+            margin-bottom: 22px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            box-shadow: var(--shadow);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-icon {
+            width: 52px;
+            height: 52px;
+
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.16);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 25px;
+        }
+
+        .brand h1 {
+            font-size: 22px;
+        }
+
+        .brand p {
+            margin-top: 4px;
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        .status-pill {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 9px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+
+        /* GRID */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 22px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 22px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 17px;
+            font-weight: 700;
+
+            margin-bottom: 18px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        /* PATIENT */
+
+        .patient-name {
+            font-size: 25px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .patient-id {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px;
+        }
+
+        .label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .symptoms {
+            margin-top: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        /* VITALS */
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .vital {
+            padding: 16px;
+            border-radius: 13px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+        }
+
+        .vital-value {
+            font-size: 23px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .unit {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* ECG IMAGE */
+
+        .ecg-card {
+            min-height: 500px;
+        }
+
+        .ecg-image-wrapper {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+
+            padding: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 380px;
+
+            overflow: hidden;
+        }
+
+        .ecg-image-wrapper img {
+            max-width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        /* AI RESULT */
+
+        .ai-result {
+            margin-top: 18px;
+            border-radius: 16px;
+            padding: 22px;
+
+            background: #f8fafc;
+            border: 1px solid var(--border);
+        }
+
+        .prediction {
+            font-size: 25px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .confidence {
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .analysis-status {
+            display: inline-flex;
+            padding: 7px 13px;
+            border-radius: 30px;
+
+            background: #dcfce7;
+            color: #166534;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* DIAGNOSTIC */
+
+        .diagnostic-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .diagnostic-box {
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .diagnostic-value {
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        /* LEADS */
+
+        .lead-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 9px;
+        }
+
+        .lead {
+            padding: 11px;
+            border-radius: 9px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            text-align: center;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* BUTTONS */
+
+        .actions {
+            margin-top: 22px;
+
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+
+            padding: 14px;
+
+            border-radius: 11px;
+
+            text-decoration: none;
+
+            text-align: center;
+
+            font-weight: 600;
+
+            border: none;
+
+            cursor: pointer;
+
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #eef2f7;
+            color: var(--text);
+        }
+
+        /* LOADING */
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--muted);
+        }
+
+        .loading i {
+            font-size: 35px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* ERROR */
+
+        .error {
+            display: none;
+
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+
+            padding: 16px;
+            border-radius: 12px;
+
+            margin-bottom: 20px;
+        }
+
+        /* DARK MODE */
+
+        @media (prefers-color-scheme: dark) {
+
+            :root {
+                --bg: #0b1220;
+                --card: #111827;
+                --text: #f3f4f6;
+                --muted: #9ca3af;
+                --border: #263244;
+
+                --shadow:
+                    0 12px 35px rgba(0, 0, 0, 0.25);
+            }
+
+            .info-box,
+            .vital,
+            .diagnostic-box,
+            .lead,
+            .symptoms,
+            .ai-result {
+                background: #182231;
+                border-color: #293548;
+            }
+
+            .ecg-image-wrapper {
+                background: #ffffff;
+            }
+
+            .btn-secondary {
+                background: #1f2937;
+                color: #f3f4f6;
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .diagnostic-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .lead-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .page {
+                padding: 12px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .info-grid,
+            .vitals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .diagnostic-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .lead-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- HEADER -->
+
+        <header class="topbar">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+
+                <div>
+
+                    <h1>Smart Ambulance Cardiac Monitor</h1>
+
+                    <p>
+                        AI-assisted ECG analysis
+                    </p>
+
+                </div>
+
             </div>
+
+            <div class="status-pill">
+                <i class="fa-solid fa-circle-check"></i>
+                Analysis Complete
+            </div>
+
+        </header>
+
+
+        <div id="errorBox" class="error"></div>
+
+
+        <div id="loading" class="loading">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            <p>
+                Loading patient and ECG information...
+            </p>
+
         </div>
+
+
+        <div id="content" style="display:none;">
+
+
+            <!-- PATIENT + ECG -->
+
+            <div class="dashboard-grid">
+
+
+                <!-- LEFT -->
+
+                <div>
+
+                    <!-- PATIENT -->
+
+                    <section class="card">
+
+                        <div class="card-title">
+
+                            <i class="fa-solid fa-user"></i>
+
+                            Patient Information
+
+                        </div>
+
+
+                        <div id="patientName" class="patient-name">
+                            --
+                        </div>
+
+
+                        <div id="patientId" class="patient-id">
+                            Patient ID: --
+                        </div>
+
+
+                        <div class="info-grid">
+
+                            <div class="info-box">
+
+                                <div class="label">
+                                    Age
+                                </div>
+
+                                <div id="age" class="value">
+                                    --
+                                </div>
+
+                            </div>
+
+
+                            <div class="info-box">
+
+                                <div class="label">
+                                    Gender
+                                </div>
+
+                                <div id="gender" class="value">
+                                    --
+                                </div>
+
+                            </div>
+
+
+                            <div class="info-box">
+
+                                <div class="label">
+                                    Priority
+                                </div>
+
+                                <div id="priority" class="value">
+                                    --
+                                </div>
+
+                            </div>
+
+
+                            <div class="info-box">
+
+                                <div class="label">
+                                    Hospital
+                                </div>
+
+                                <div id="hospital" class="value">
+                                    --
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="symptoms">
+
+                            <div class="label">
+                                Medical Notes / Symptoms
+                            </div>
+
+                            <div id="symptoms" class="value">
+                                --
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- VITALS -->
+
+                    <section class="card" style="margin-top:22px;">
+
+                        <div class="card-title">
+
+                            <i class="fa-solid fa-heart-circle-check"></i>
+
+                            Patient Vitals
+
+                        </div>
+
+
+                        <div class="vitals-grid">
+
+
+                            <div class="vital">
+
+                                <div class="label">
+                                    Heart Rate
+                                </div>
+
+                                <div id="heartRate" class="vital-value">
+                                    --
+                                </div>
+
+                                <span class="unit">
+                                    BPM
+                                </span>
+
+                            </div>
+
+
+                            <div class="vital">
+
+                                <div class="label">
+                                    SpO2
+                                </div>
+
+                                <div id="spo2" class="vital-value">
+                                    --
+                                </div>
+
+                                <span class="unit">
+                                    %
+                                </span>
+
+                            </div>
+
+
+                            <div class="vital">
+
+                                <div class="label">
+                                    Blood Pressure
+                                </div>
+
+                                <div id="bloodPressure" class="vital-value">
+                                    --
+                                </div>
+
+                                <span class="unit">
+                                    mmHg
+                                </span>
+
+                            </div>
+
+
+                            <div class="vital">
+
+                                <div class="label">
+                                    Temperature
+                                </div>
+
+                                <div id="temperature" class="vital-value">
+                                    --
+                                </div>
+
+                                <span class="unit">
+                                    °C
+                                </span>
+
+                            </div>
+
+
+                            <div class="vital">
+
+                                <div class="label">
+                                    Respiratory Rate
+                                </div>
+
+                                <div id="respiratoryRate" class="vital-value">
+                                    --
+                                </div>
+
+                                <span class="unit">
+                                    /min
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- RIGHT ECG -->
+
+                <section class="card ecg-card">
+
+                    <div class="card-title">
+
+                        <i class="fa-solid fa-wave-square"></i>
+
+                        ECG Scan
+
+                    </div>
+
+
+                    <div class="ecg-image-wrapper">
+
+                        <img id="ecgImage" src="" alt="Patient ECG">
+
+                    </div>
+
+
+                    <div class="ai-result">
+
+                        <div class="label">
+                            AI DIAGNOSTIC RESULT
+                        </div>
+
+
+                        <div id="prediction" class="prediction">
+                            --
+                        </div>
+
+
+                        <div id="confidence" class="confidence">
+                            Confidence: --
+                        </div>
+
+
+                        <span id="analysisStatus" class="analysis-status">
+                            --
+                        </span>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- DIAGNOSTIC INFORMATION -->
+
+            <section class="card" style="margin-top:22px;">
+
+                <div class="card-title">
+
+                    <i class="fa-solid fa-stethoscope"></i>
+
+                    Diagnostic Information
+
+                </div>
+
+
+                <div class="diagnostic-grid">
+
+
+                    <div class="diagnostic-box">
+
+                        <div class="label">
+                            Rhythm
+                        </div>
+
+                        <div id="rhythm" class="diagnostic-value">
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="diagnostic-box">
+
+                        <div class="label">
+                            ST Elevation Risk
+                        </div>
+
+                        <div id="stRisk" class="diagnostic-value">
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="diagnostic-box">
+
+                        <div class="label">
+                            PR Interval
+                        </div>
+
+                        <div id="prInterval" class="diagnostic-value">
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="diagnostic-box">
+
+                        <div class="label">
+                            QRS Duration
+                        </div>
+
+                        <div id="qrs" class="diagnostic-value">
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="diagnostic-box">
+
+                        <div class="label">
+                            QT / QTc
+                        </div>
+
+                        <div id="qtc" class="diagnostic-value">
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="diagnostic-box">
+
+                        <div class="label">
+                            ST Displacement
+                        </div>
+
+                        <div id="stDisplacement" class="diagnostic-value">
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="diagnostic-box">
+
+                        <div class="label">
+                            Lead Mode
+                        </div>
+
+                        <div id="leadMode" class="diagnostic-value">
+                            12-Lead
+                        </div>
+
+                    </div>
+
+
+                    <div class="diagnostic-box">
+
+                        <div class="label">
+                            DSP Filters
+                        </div>
+
+                        <div id="filters" class="diagnostic-value">
+                            0.5 - 40Hz
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 12 LEAD -->
+
+            <section class="card" style="margin-top:22px;">
+
+                <div class="card-title">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    12-Lead ECG Analysis
+
+                </div>
+
+
+                <div class="lead-grid">
+
+                    <div class="lead">I — Lateral</div>
+
+                    <div class="lead">II — Inferior</div>
+
+                    <div class="lead">III — Inferior</div>
+
+                    <div class="lead">aVR</div>
+
+                    <div class="lead">aVL — High Lateral</div>
+
+                    <div class="lead">aVF — Inferior</div>
+
+                    <div class="lead">V1 — Septal</div>
+
+                    <div class="lead">V2 — Septal</div>
+
+                    <div class="lead">V3 — Anterior</div>
+
+                    <div class="lead">V4 — Anterior</div>
+
+                    <div class="lead">V5 — Apical</div>
+
+                    <div class="lead">V6 — Apical</div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <a href="ecg.html" class="btn btn-secondary">
+
+                    Upload Another ECG
+
+                </a>
+
+
+                <button class="btn btn-primary" onclick="window.print()">
+
+                    Print Diagnostic Report
+
+                </button>
+
+            </div>
+
+
+        </div>
+
     </div>
-    <script src="script.js"></script>
+
+
+    <script>
+
+        /*
+         * ==========================================================
+         * SMART AMBULANCE - INDEPENDENT ECG RESULT PAGE
+         * ==========================================================
+         *
+         * This page does NOT depend on the hospital dashboard.
+         *
+         * It uses:
+         *
+         * patientData  -> patient information entered in frontend
+         * vitalsData   -> vitals entered in frontend
+         * ecgResult    -> result returned by backend + AI
+         * patientId    -> current patient ID
+         *
+         * ==========================================================
+         */
+
+
+        const API_URL =
+            "http://127.0.0.1:8000";
+
+
+        const patientId =
+            localStorage.getItem("patientId");
+
+
+        const patientData =
+            JSON.parse(
+                localStorage.getItem("patientData") || "{}"
+            );
+
+
+        const vitalsData =
+            JSON.parse(
+                localStorage.getItem("vitalsData") || "{}"
+            );
+
+
+        const ecgResult =
+            JSON.parse(
+                localStorage.getItem("ecgResult") || "{}"
+            );
+
+
+        /*
+         * ----------------------------------------------------------
+         * BASIC VALIDATION
+         * ----------------------------------------------------------
+         */
+
+        if (!patientId || !Object.keys(patientData).length) {
+
+            showError(
+                "Patient information was not found. Please register the patient again."
+            );
+
+        } else {
+
+            loadResult();
+
+        }
+
+
+        /*
+         * ----------------------------------------------------------
+         * LOAD EVERYTHING
+         * ----------------------------------------------------------
+         */
+
+        function loadResult() {
+
+
+            /*
+             * PATIENT
+             */
+
+            document.getElementById("patientName")
+                .textContent =
+                `${patientData.first_name || ""} ${patientData.last_name || ""}`.trim()
+                || "Unknown Patient";
+
+
+            document.getElementById("patientId")
+                .textContent =
+                `Patient ID: ${patientId}`;
+
+
+            document.getElementById("age")
+                .textContent =
+                patientData.age ?? "N/A";
+
+
+            document.getElementById("gender")
+                .textContent =
+                patientData.gender || "N/A";
+
+
+            document.getElementById("priority")
+                .textContent =
+                patientData.triage_priority || "N/A";
+
+
+            document.getElementById("hospital")
+                .textContent =
+                patientData.hospital || "Not assigned";
+
+
+            document.getElementById("symptoms")
+                .textContent =
+                patientData.medical_notes || "No symptoms recorded";
+
+
+            /*
+             * VITALS
+             */
+
+            document.getElementById("heartRate")
+                .textContent =
+                vitalsData.heart_rate ?? "N/A";
+
+
+            document.getElementById("spo2")
+                .textContent =
+                vitalsData.spo2 ?? "N/A";
+
+
+            document.getElementById("bloodPressure")
+                .textContent =
+                vitalsData.blood_pressure || "N/A";
+
+
+            document.getElementById("temperature")
+                .textContent =
+                vitalsData.temperature ?? "N/A";
+
+
+            document.getElementById("respiratoryRate")
+                .textContent =
+                vitalsData.respiratory_rate ?? "N/A";
+
+
+            /*
+             * AI RESULT
+             */
+
+            const prediction =
+                ecgResult.prediction || "Not available";
+
+
+            document.getElementById("prediction")
+                .textContent =
+                formatPrediction(prediction);
+
+
+            document.getElementById("confidence")
+                .textContent =
+                ecgResult.confidence !== undefined
+                    ? `Confidence: ${ecgResult.confidence}%`
+                    : "Confidence: N/A";
+
+
+            document.getElementById("analysisStatus")
+                .textContent =
+                ecgResult.status || "ANALYSED";
+
+
+            /*
+             * BASIC DIAGNOSTIC INTERPRETATION
+             *
+             * Your current AI API returns:
+             *
+             * normal
+             * possible_stemi
+             * needs_review
+             *
+             * So we derive the visible interpretation
+             * from that actual AI result.
+             */
+
+            setDiagnosticInformation(prediction);
+
+
+            /*
+             * ECG IMAGE
+             */
+
+            if (ecgResult.image_path) {
+
+                let imagePath =
+                    ecgResult.image_path
+                        .replaceAll("\\", "/");
+
+
+                /*
+                 * Remove accidental leading slash.
+                 */
+
+                imagePath =
+                    imagePath.replace(/^\/+/, "");
+
+
+                const imageUrl =
+                    `${API_URL}/${imagePath}`;
+
+
+                const image =
+                    document.getElementById("ecgImage");
+
+
+                image.src =
+                    imageUrl;
+
+
+                image.onload =
+                    function () {
+
+                        console.log(
+                            "ECG image loaded successfully."
+                        );
+
+                    };
+
+
+                image.onerror =
+                    function () {
+
+                        console.error(
+                            "ECG image could not be loaded:",
+                            imageUrl
+                        );
+
+                        /*
+                         * Don't hide the whole page.
+                         */
+
+                        this.alt =
+                            "ECG image unavailable";
+                    };
+
+            } else {
+
+                document.getElementById("ecgImage").alt =
+                    "No ECG image available";
+
+            }
+
+
+            /*
+             * SHOW PAGE
+             */
+
+            document.getElementById("loading")
+                .style.display =
+                "none";
+
+
+            document.getElementById("content")
+                .style.display =
+                "block";
+
+        }
+
+
+        /*
+         * ----------------------------------------------------------
+         * FORMAT AI PREDICTION
+         * ----------------------------------------------------------
+         */
+
+        function formatPrediction(value) {
+
+            return value
+                .replaceAll("_", " ")
+                .replace(/\b\w/g, char =>
+                    char.toUpperCase()
+                );
+
+        }
+
+
+        /*
+         * ----------------------------------------------------------
+         * DIAGNOSTIC INFORMATION
+         * ----------------------------------------------------------
+         */
+
+        function setDiagnosticInformation(prediction) {
+
+            const value =
+                prediction.toLowerCase();
+
+
+            if (value === "normal") {
+
+                document.getElementById("rhythm")
+                    .textContent =
+                    "Normal Sinus Rhythm";
+
+
+                document.getElementById("stRisk")
+                    .textContent =
+                    "LOW";
+
+
+            } else if (
+                value === "possible_stemi"
+            ) {
+
+                document.getElementById("rhythm")
+                    .textContent =
+                    "Possible STEMI";
+
+
+                document.getElementById("stRisk")
+                    .textContent =
+                    "HIGH";
+
+
+            } else {
+
+                document.getElementById("rhythm")
+                    .textContent =
+                    "Requires Cardiologist Review";
+
+
+                document.getElementById("stRisk")
+                    .textContent =
+                    "REVIEW";
+
+            }
+
+
+            /*
+             * Your current AI response does not contain
+             * PR/QRS/QT/ST numerical measurements.
+             *
+             * Therefore we do NOT invent those values.
+             */
+
+            document.getElementById("prInterval")
+                .textContent =
+                "Not provided";
+
+
+            document.getElementById("qrs")
+                .textContent =
+                "Not provided";
+
+
+            document.getElementById("qtc")
+                .textContent =
+                "Not provided";
+
+
+            document.getElementById("stDisplacement")
+                .textContent =
+                "Not provided";
+
+        }
+
+
+        /*
+         * ----------------------------------------------------------
+         * ERROR
+         * ----------------------------------------------------------
+         */
+
+        function showError(message) {
+
+            document.getElementById("loading")
+                .style.display =
+                "none";
+
+
+            const box =
+                document.getElementById("errorBox");
+
+
+            box.textContent =
+                message;
+
+
+            box.style.display =
+                "block";
+
+        }
+
+    </script>
+
 </body>
+
 </html>

@@ -1,27 +1,32 @@
-!DOCTYPE html>
+<!DOCTYPE html>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure EMS ECG Viewer & Clinical Telemetry Dashboard</title>
+
+    ```
+    <title>ECG Viewer | Smart Ambulance</title>
+
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
         rel="stylesheet">
+
     <style>
         :root {
-            --bg-dark: #080b12;
-            --panel-bg: rgba(16, 23, 38, 0.75);
-            --panel-border: rgba(255, 255, 255, 0.08);
-            --accent-cyan: #00f2ff;
-            --accent-green: #00ff88;
-            --accent-red: #ff3b5c;
-            --accent-amber: #ffb800;
-            --text-main: #e2e8f0;
-            --text-muted: #64748b;
-            --ecg-trace: #00ff88;
-            --ecg-grid-major: rgba(255, 59, 92, 0.25);
-            --ecg-grid-minor: rgba(255, 59, 92, 0.08);
+            --bg: #080b12;
+            --panel: #101726;
+            --panel-2: #141c2d;
+            --border: rgba(255, 255, 255, 0.09);
+
+            --cyan: #00d9ff;
+            --green: #00e889;
+            --red: #ff4664;
+            --amber: #ffb82e;
+
+            --text: #e7edf5;
+            --muted: #8491a5;
         }
 
         * {
@@ -31,28 +36,38 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            font-family: "Inter", sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%,
+                    rgba(0, 217, 255, 0.07),
+                    transparent 35%),
+                radial-gradient(circle at 90% 90%,
+                    rgba(0, 232, 137, 0.05),
+                    transparent 35%),
+                var(--bg);
+
+            color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden;
-            background-image:
-                radial-gradient(circle at 15% 15%, rgba(0, 242, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(255, 59, 92, 0.05) 0%, transparent 40%);
         }
 
-        /* Top Header Navigation */
+        /* HEADER */
+
         header {
+            height: 68px;
+            padding: 0 28px;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 24px;
-            background: rgba(11, 15, 25, 0.9);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--panel-border);
+
+            background: rgba(8, 11, 18, 0.92);
+            border-bottom: 1px solid var(--border);
+
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 10;
+
+            backdrop-filter: blur(14px);
         }
 
         .brand {
@@ -62,1389 +77,961 @@
         }
 
         .brand-logo {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
-            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+
             display: grid;
             place-items: center;
-            color: #000;
-            font-weight: 800;
-            font-size: 18px;
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
-        }
 
-        .brand-title {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .brand-title span {
-            color: var(--accent-cyan);
-            font-weight: 400;
-            font-size: 13px;
-            margin-left: 6px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--panel-border);
-        }
-
-        .badge-success {
-            color: var(--accent-green);
-            border-color: rgba(0, 255, 136, 0.3);
-            background: rgba(0, 255, 136, 0.1);
-        }
-
-        .badge-warning {
-            color: var(--accent-amber);
-            border-color: rgba(255, 184, 0, 0.3);
-            background: rgba(255, 184, 0, 0.1);
-        }
-
-        .badge-danger {
-            color: var(--accent-red);
-            border-color: rgba(255, 59, 92, 0.3);
-            background: rgba(255, 59, 92, 0.1);
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: currentColor;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.4;
-                transform: scale(0.8);
-            }
-        }
-
-        .btn {
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-main);
-            border: 1px solid var(--panel-border);
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-cyan {
-            background: var(--accent-cyan);
-            color: #000;
-            border: none;
-            font-weight: 600;
-        }
-
-        .btn-cyan:hover {
-            background: #33f5ff;
-            box-shadow: 0 0 12px rgba(0, 242, 255, 0.4);
-        }
-
-        .btn-red {
-            background: var(--accent-red);
-            color: #fff;
-            border: none;
-            font-weight: 600;
-        }
-
-        .btn-red:hover {
-            background: #ff5270;
-            box-shadow: 0 0 12px rgba(255, 59, 92, 0.4);
-        }
-
-        /* Vitals Banner */
-        .vitals-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            padding: 16px 24px;
-            background: rgba(10, 14, 23, 0.5);
-        }
-
-        .vital-card {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
             border-radius: 10px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
+
+            background: linear-gradient(135deg,
+                    var(--cyan),
+                    var(--green));
+
+            color: #061016;
+            font-size: 18px;
+            font-weight: 800;
         }
 
-        .vital-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--accent-cyan);
-        }
-
-        .vital-card.red::before {
-            background: var(--accent-red);
-        }
-
-        .vital-card.amber::before {
-            background: var(--accent-amber);
-        }
-
-        .vital-card.green::before {
-            background: var(--accent-green);
-        }
-
-        .vital-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-        }
-
-        .vital-value-wrap {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-top: 4px;
-        }
-
-        .vital-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 26px;
+        .brand-text h1 {
+            font-size: 16px;
             font-weight: 700;
         }
 
-        .vital-unit {
+        .brand-text span {
+            color: var(--muted);
             font-size: 11px;
-            color: var(--text-muted);
         }
 
-        /* Main Dashboard Grid */
-        .dashboard-container {
+        .back-btn {
+            text-decoration: none;
+            color: var(--text);
+
+            padding: 9px 14px;
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            background: var(--panel);
+
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
+
+        /* MAIN */
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 28px;
+        }
+
+        .page-title {
+            margin-bottom: 22px;
+        }
+
+        .page-title h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* PATIENT BAR */
+
+        .patient-bar {
             display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 20px;
-            padding: 0 24px 24px 24px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+
+            margin-bottom: 18px;
         }
 
-        @media (max-width: 1200px) {
-            .dashboard-container {
-                grid-template-columns: 1fr;
-            }
+        .patient-info {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .label {
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin-bottom: 6px;
+        }
+
+        .value {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        /* LAYOUT */
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+            gap: 18px;
         }
 
         .panel {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            backdrop-filter: blur(10px);
+            background: rgba(16, 23, 38, 0.88);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
         }
 
         .panel-header {
+            padding: 16px 18px;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid var(--panel-border);
-            padding-bottom: 10px;
+
+            border-bottom: 1px solid var(--border);
         }
 
         .panel-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        /* Oscilloscope Canvas Area */
-        .canvas-toolbar {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-        }
-
-        .canvas-toolbar label {
-            color: var(--text-muted);
+        .panel-subtitle {
+            color: var(--muted);
             font-size: 11px;
-            font-weight: 600;
+            margin-top: 3px;
         }
 
-        .select-input {
-            background: #121929;
-            color: var(--text-main);
-            border: 1px solid var(--panel-border);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
+        /* ECG IMAGE */
 
-        .canvas-container {
-            position: relative;
-            width: 100%;
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
-        }
+        .ecg-image-wrapper {
+            padding: 18px;
 
-        canvas {
-            display: block;
-            width: 100%;
-            height: 480px;
-        }
+            background:
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px,
+                    transparent 1px),
+                linear-gradient(90deg,
+                    rgba(255, 255, 255, 0.015) 1px,
+                    transparent 1px);
 
-        .caliper-info-bar {
-            display: flex;
-            gap: 20px;
-            background: rgba(0, 242, 255, 0.08);
-            border: 1px solid rgba(0, 242, 255, 0.2);
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: var(--accent-cyan);
-        }
+            background-size: 20px 20px;
 
-        /* Diagnostic & Analysis Box */
-        .diagnostic-alert-card {
-            background: rgba(255, 59, 92, 0.1);
-            border: 1px solid rgba(255, 59, 92, 0.3);
-            border-radius: 8px;
-            padding: 14px;
-        }
+            min-height: 500px;
 
-        .diagnostic-alert-card.normal {
-            background: rgba(0, 255, 136, 0.1);
-            border-color: rgba(0, 255, 136, 0.3);
-        }
-
-        .alert-heading {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--accent-red);
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .diagnostic-alert-card.normal .alert-heading {
-            color: var(--accent-green);
-        }
-
-        .alert-body {
-            font-size: 13px;
-            color: #cbd5e1;
-            line-height: 1.5;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            text-align: center;
-        }
-
-        .metric-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--panel-border);
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .metric-name {
-            font-size: 10px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .metric-val {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 16px;
-            font-weight: 700;
-            margin-top: 2px;
-        }
-
-        /* Form Inputs & Controls Right Column */
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-bottom: 10px;
-        }
-
-        .form-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .form-control {
-            background: #101726;
-            border: 1px solid var(--panel-border);
-            color: var(--text-main);
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            width: 100%;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .preset-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .range-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .range-wrap input[type="range"] {
-            flex: 1;
-            accent-color: var(--accent-cyan);
-        }
-
-        .range-val {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            width: 40px;
-        }
-
-        /* Equipment Driver Status Card */
-        .equipment-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--panel-border);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 12px;
-        }
-
-        .status-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-
-        /* Audit Log */
-        .audit-log-box {
-            background: #04060a;
-            border: 1px solid var(--panel-border);
-            border-radius: 6px;
-            height: 120px;
-            overflow-y: auto;
-            padding: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: #94a3b8;
-        }
-
-        .log-entry {
-            margin-bottom: 4px;
-        }
-
-        .log-time {
-            color: var(--accent-cyan);
-        }
-
-        /* Modal styling */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
+        #ecgImage {
+            max-width: 100%;
+            max-height: 700px;
+
+            display: none;
+
+            object-fit: contain;
+
+            border-radius: 8px;
+
+            background: white;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.35);
         }
 
-        .modal-card {
-            background: #0f172a;
-            border: 1px solid var(--panel-border);
+        .loading {
+            color: var(--muted);
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .error {
+            color: var(--red);
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        /* AI RESULT */
+
+        .result-body {
+            padding: 20px;
+        }
+
+        .result-box {
             border-radius: 12px;
-            width: 90%;
-            max-width: 680px;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            margin-bottom: 18px;
+
+            background: var(--panel-2);
+            border: 1px solid var(--border);
         }
 
-        .modal-header {
+        .result-label {
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+
+        .prediction {
+            font-size: 25px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-transform: capitalize;
+        }
+
+        .prediction.normal {
+            color: var(--green);
+        }
+
+        .prediction.stemi {
+            color: var(--red);
+        }
+
+        .prediction.review {
+            color: var(--amber);
+        }
+
+        .confidence {
+            margin-top: 18px;
+        }
+
+        .confidence-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--panel-border);
+            margin-bottom: 8px;
+
+            font-size: 13px;
+        }
+
+        .confidence-value {
+            font-family: "JetBrains Mono", monospace;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
+        .progress {
+            height: 8px;
+
+            background: #202a3b;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+
+            background: linear-gradient(90deg,
+                    var(--cyan),
+                    var(--green));
+
+            transition: width 0.8s ease;
+        }
+
+        /* DATA */
+
+        .data-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+
             padding-bottom: 12px;
-            margin-bottom: 16px;
+
+            border-bottom: 1px solid var(--border);
+
+            font-size: 13px;
         }
 
-        .lead-grid-map {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin-top: 10px;
+        .data-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
         }
 
-        .lead-chip {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--panel-border);
-            padding: 6px;
-            border-radius: 4px;
+        .data-row span:first-child {
+            color: var(--muted);
+        }
+
+        .data-row span:last-child {
+            font-family: "JetBrains Mono", monospace;
+            text-align: right;
+        }
+
+        /* STATUS */
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
             font-size: 11px;
-            text-align: center;
+            font-weight: 600;
+
+            background: rgba(0, 232, 137, 0.1);
+            color: var(--green);
         }
 
-        .lead-chip.stemi {
-            background: rgba(255, 59, 92, 0.25);
-            border-color: var(--accent-red);
-            color: #fff;
-            font-weight: 700;
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* DISCLAIMER */
+
+        .disclaimer {
+            margin-top: 18px;
+
+            padding: 14px 16px;
+
+            border-left: 3px solid var(--amber);
+
+            background: rgba(255, 184, 46, 0.06);
+
+            color: var(--muted);
+
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 0 15px;
+            }
+
+            .container {
+                padding: 18px 14px;
+            }
+
+            .patient-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title h2 {
+                font-size: 20px;
+            }
+
+            .ecg-image-wrapper {
+                min-height: 300px;
+                padding: 10px;
+            }
         }
     </style>
+    ```
+
 </head>
 
 <body>
 
-    <!-- Header Section -->
     <header>
+
+        ```
         <div class="brand">
-            <div class="brand-logo">♥️</div>
-            <div>
-                <div class="brand-title">APEX-EMS <span>CardioGuard Telemetry v3.4</span></div>
+
+            <div class="brand-logo">
+                ECG
             </div>
+
+            <div class="brand-text">
+                <h1>Smart Ambulance</h1>
+                <span>Hospital ECG Viewer</span>
+            </div>
+
         </div>
-        <div class="header-actions">
-            <div class="badge badge-success" id="e2eeBadge">
-                <span class="pulse-dot"></span> AES-256 E2EE ACTIVE
-            </div>
-            <div class="badge badge-warning" id="roleBadge">
-                EMS PARAMEDIC MODE
-            </div>
-            <button class="btn" onclick="toggleRole()">Switch Role</button>
-            <button class="btn" onclick="toggleHIPAA()" id="hipaaBtn">HIPAA Anonymize</button>
-            <button class="btn btn-red" onclick="dispatchTeleCardiology()">
-                📡 Dispatch to PCI Hospital
-            </button>
-        </div>
+
+        <a href="patientcards.html" class="back-btn">
+            Back to Patients
+        </a>
+        ```
+
     </header>
 
-    <!-- Top Vitals Banner -->
-    <div class="vitals-bar">
-        <div class="vital-card green" id="hrCard">
-            <span class="vital-label">Heart Rate (ECG)</span>
-            <div class="vital-value-wrap">
-                <span class="vital-value" id="valHR">72</span>
-                <span class="vital-unit">BPM</span>
-            </div>
-        </div>
-        <div class="vital-card green">
-            <span class="vital-label">SpO2 (Pulse Oximetry)</span>
-            <div class="vital-value-wrap">
-                <span class="vital-value" id="valSpO2">98</span>
-                <span class="vital-unit">%</span>
-            </div>
-        </div>
-        <div class="vital-card green">
-            <span class="vital-label">NIBP (Blood Pressure)</span>
-            <div class="vital-value-wrap">
-                <span class="vital-value" id="valNIBP">124/82</span>
-                <span class="vital-unit">mmHg</span>
-            </div>
-        </div>
-        <div class="vital-card green">
-            <span class="vital-label">Respiration Rate</span>
-            <div class="vital-value-wrap">
-                <span class="vital-value" id="valRR">16</span>
-                <span class="vital-unit">/min</span>
-            </div>
-        </div>
-        <div class="vital-card green" id="stCard">
-            <span class="vital-label">Max ST Displacement</span>
-            <div class="vital-value-wrap">
-                <span class="vital-value" id="valST">+0.2</span>
-                <span class="vital-unit">mm</span>
-            </div>
-        </div>
-    </div>
+    <main class="container">
 
-    <!-- Main Content Container -->
-    <div class="dashboard-container">
+        ```
+        <div class="page-title">
+            <h2>ECG Analysis</h2>
+            <p>Uploaded ECG image and AI-assisted analysis</p>
+        </div>
 
-        <!-- Left Column: Waveform Oscilloscope & Diagnostic Engine -->
-        <div style="display: flex; flex-direction: column; gap: 16px;">
+
+        <!-- PATIENT INFORMATION -->
+
+        <section class="patient-bar">
+
+            <div class="patient-info">
+                <div class="label">Patient</div>
+                <div class="value" id="patientName">Loading...</div>
+            </div>
+
+            <div class="patient-info">
+                <div class="label">Patient ID</div>
+                <div class="value" id="patientId">--</div>
+            </div>
+
+            <div class="patient-info">
+                <div class="label">Age / Gender</div>
+                <div class="value" id="patientAgeGender">--</div>
+            </div>
+
+            <div class="patient-info">
+                <div class="label">ECG Status</div>
+                <div class="value">
+                    <span class="status" id="statusBadge">
+                        <span class="status-dot"></span>
+                        Loading
+                    </span>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- MAIN GRID -->
+
+        <section class="grid">
+
+            <!-- ECG IMAGE -->
 
             <div class="panel">
+
                 <div class="panel-header">
-                    <div class="panel-title">
-                        <span>⚡ Real-Time 12-Lead ECG Oscilloscope</span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-cyan" onclick="toggleFreeze()" id="freezeBtn">⏸️ Freeze</button>
-                        <button class="btn" onclick="openPrintModal()">📄 Diagnostic Report</button>
-                    </div>
-                </div>
 
-                <!-- Canvas Control Toolbar -->
-                <div class="canvas-toolbar">
                     <div>
-                        <label>Lead Mode:</label>
-                        <select class="select-input" id="leadModeSelect" onchange="updateCanvasMode()">
-                            <option value="single">Single Lead Focus (Lead II)</option>
-                            <option value="12lead" selected>Full 12-Lead Matrix (I, II, III, aVR, aVL, aVF, V1-V6)
-                            </option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Gain:</label>
-                        <select class="select-input" id="gainSelect" onchange="drawCanvasGrid()">
-                            <option value="5">5 mm/mV</option>
-                            <option value="10" selected>10 mm/mV</option>
-                            <option value="20">20 mm/mV</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Speed:</label>
-                        <select class="select-input" id="speedSelect">
-                            <option value="25" selected>25 mm/s</option>
-                            <option value="50">50 mm/s</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Caliper Tool:</label>
-                        <button class="btn" id="caliperBtn" style="padding: 2px 8px;"
-                            onclick="toggleCaliper()">Off</button>
-                    </div>
-                    <div>
-                        <label>DSP Filters:</label>
-                        <span style="color: var(--accent-green); font-weight: 600;">0.5 - 40Hz + Notch 60Hz</span>
-                    </div>
-                </div>
-
-                <!-- Interactive ECG Canvas -->
-                <div class="canvas-container">
-                    <canvas id="ecgCanvas" width="900" height="480"></canvas>
-                </div>
-
-                <!-- Caliper Output Bar -->
-                <div class="caliper-info-bar" id="caliperBar" style="display: none;">
-                    <span>📐 Caliper Measurement:</span>
-                    <span>Time: <strong id="calTime">0</strong> ms</span>
-                    <span>Equivalent Rate: <strong id="calBpm">0</strong> BPM</span>
-                    <span>Voltage: <strong id="calVolt">0.00</strong> mV</span>
-                </div>
-            </div>
-
-            <!-- Waveform Synthesizer & Noise Controls -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">🎛️ Live Parameter Synthesizer</div>
-                    <span style="font-size: 11px; color: var(--text-muted);">Adjust frontend signal parameters in
-                        real-time</span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div>
-                        <div class="form-group">
-                            <label class="form-label">Heart Rate (BPM)</label>
-                            <div class="range-wrap">
-                                <input type="range" id="sliderHR" min="30" max="210" value="72"
-                                    oninput="onSynthChange()">
-                                <span class="range-val" id="valSynthHR">72</span>
-                            </div>
+                        <div class="panel-title">
+                            Uploaded ECG
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">ST-Segment Elevation (mm)</label>
-                            <div class="range-wrap">
-                                <input type="range" id="sliderST" min="-4" max="8" value="0" step="0.5"
-                                    oninput="onSynthChange()">
-                                <span class="range-val" id="valSynthST">0.0</span>
-                            </div>
+
+                        <div class="panel-subtitle">
+                            Original ECG image received from ambulance
                         </div>
                     </div>
+
+                </div>
+
+
+                <div class="ecg-image-wrapper">
+
+                    <div id="imageLoading" class="loading">
+                        Loading ECG image...
+                    </div>
+
+                    <img id="ecgImage" alt="Uploaded ECG">
+
+                </div>
+
+            </div>
+
+
+            <!-- AI RESULT -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
                     <div>
-                        <div class="form-group">
-                            <label class="form-label">Baseline Wander Noise</label>
-                            <div class="range-wrap">
-                                <input type="range" id="sliderNoise" min="0" max="100" value="5"
-                                    oninput="onSynthChange()">
-                                <span class="range-val" id="valSynthNoise">5%</span>
-                            </div>
+                        <div class="panel-title">
+                            AI Analysis
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Muscle Tremor Artifact</label>
-                            <div class="range-wrap">
-                                <input type="range" id="sliderTremor" min="0" max="100" value="0"
-                                    oninput="onSynthChange()">
-                                <span class="range-val" id="valSynthTremor">0%</span>
-                            </div>
+
+                        <div class="panel-subtitle">
+                            ECG image classifier output
                         </div>
                     </div>
+
                 </div>
+
+
+                <div class="result-body">
+
+                    <div class="result-box">
+
+                        <div class="result-label">
+                            Prediction
+                        </div>
+
+                        <div id="prediction" class="prediction">
+                            Analysing...
+                        </div>
+
+
+                        <div class="confidence">
+
+                            <div class="confidence-row">
+
+                                <span>
+                                    Confidence
+                                </span>
+
+                                <span id="confidenceText" class="confidence-value">
+                                    --
+                                </span>
+
+                            </div>
+
+
+                            <div class="progress">
+
+                                <div id="confidenceBar" class="progress-bar"></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="data-list">
+
+                        <div class="data-row">
+                            <span>ECG Record ID</span>
+                            <span id="ecgId">--</span>
+                        </div>
+
+                        <div class="data-row">
+                            <span>Upload Status</span>
+                            <span id="uploadStatus">--</span>
+                        </div>
+
+                        <div class="data-row">
+                            <span>Uploaded At</span>
+                            <span id="uploadedAt">--</span>
+                        </div>
+
+                        <div class="data-row">
+                            <span>Image Path</span>
+                            <span id="imagePath">--</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="disclaimer">
+                        AI output is intended as decision-support assistance
+                        only and should be reviewed by a qualified healthcare
+                        professional.
+                    </div>
+
+                </div>
+
             </div>
 
-            <!-- Automated Real-Time Algorithmic Analysis -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">🤖 Real-Time Algorithmic Diagnostic Engine</div>
-                    <span class="badge badge-success">ACC / AHA Algorithm Compliant</span>
-                </div>
+        </section>
+        ```
 
-                <div class="diagnostic-alert-card normal" id="diagAlertCard">
-                    <div class="alert-heading" id="diagHeading">
-                        <span>✔️ NORMAL SINUS RHYTHM</span>
-                    </div>
-                    <div class="alert-body" id="diagBody">
-                        Normal baseline cardiac conduction. No significant ST-segment elevation or depression detected
-                        across leads I-III, aVR-aVF, V1-V6.
-                    </div>
-                </div>
+    </main>
 
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <div class="metric-name">PR INTERVAL</div>
-                        <div class="metric-val" id="mPR">156 ms</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-name">QRS DURATION</div>
-                        <div class="metric-val" id="mQRS">88 ms</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-name">QT / QTc (BAZETT)</div>
-                        <div class="metric-val" id="mQT">380 / 416 ms</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-name">ST ELEVATION RISK</div>
-                        <div class="metric-val" id="mRisk" style="color: var(--accent-green);">LOW</div>
-                    </div>
-                </div>
-
-                <!-- Lead Anatomic Map -->
-                <div>
-                    <div class="form-label">12-LEAD STEMI ANATOMIC MAPPING</div>
-                    <div class="lead-grid-map" id="leadGridMap">
-                        <div class="lead-chip" id="chip-I">I (Lateral)</div>
-                        <div class="lead-chip" id="chip-aVR">aVR</div>
-                        <div class="lead-chip" id="chip-V1">V1 (Septal)</div>
-                        <div class="lead-chip" id="chip-II">II (Inferior)</div>
-                        <div class="lead-chip" id="chip-aVL">aVL (High Lat)</div>
-                        <div class="lead-chip" id="chip-V2">V2 (Septal)</div>
-                        <div class="lead-chip" id="chip-III">III (Inferior)</div>
-                        <div class="lead-chip" id="chip-aVF">aVF (Inferior)</div>
-                        <div class="lead-chip" id="chip-V3">V3 (Anterior)</div>
-                        <div class="lead-chip" id="chip-V4">V4 (Anterior)</div>
-                        <div class="lead-chip" id="chip-V5">V5 (Apical)</div>
-                        <div class="lead-chip" id="chip-V6">V6 (Apical)</div>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Right Column: Patient Inputs, Equipment Driver & Integration -->
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-
-            <!-- Patient Demographics & Telemetry Inputs -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">👤 Patient Telemetry Inputs</div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Patient Name</label>
-                        <input type="text" class="form-control" id="pName" value="John H. Doe"
-                            oninput="updatePatientData()">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Patient ID</label>
-                        <input type="text" class="form-control" id="pID" value="EMS-99481-B"
-                            oninput="updatePatientData()">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Age / Gender</label>
-                        <input type="text" class="form-control" id="pAge" value="58 / Male">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">EMS Unit / Ambulance</label>
-                        <input type="text" class="form-control" value="Medic-71 (Metro EMS)">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Chief Complaint / Symptoms</label>
-                    <input type="text" class="form-control" id="pSymptoms"
-                        value="Substernal chest pain, radiating to left shoulder, diaphoresis. Onset: 35 mins ago.">
-                </div>
-
-                <div class="form-label" style="margin-top: 6px;">QUICK CLINICAL SCENARIOS</div>
-                <div class="preset-buttons">
-                    <button class="btn btn-red" onclick="loadPreset('stemi')">🚨 Acute Anterior STEMI</button>
-                    <button class="btn" onclick="loadPreset('afib')">⚠️ AFib with RVR</button>
-                    <button class="btn" onclick="loadPreset('brady')">📉 Bradycardia Ischemia</button>
-                    <button class="btn" onclick="loadPreset('nsr')">💚 Normal Sinus (NSR)</button>
-                </div>
-            </div>
-
-            <!-- Ambulance Equipment Hardware Integration Hub -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">🚑 Ambulance Equipment Hub</div>
-                    <span class="badge badge-success">IEEE 11073-MDC</span>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Connected Monitor / Defibrillator Driver</label>
-                    <select class="select-input" style="width: 100%;" id="eqDriver" onchange="onDriverChange()">
-                        <option value="zoll">Zoll® X Series Advanced (Bluetooth 5.2 / Mesh)</option>
-                        <option value="lifepak">Physio-Control LIFEPAK® 15 (Direct Serial/USB)</option>
-                        <option value="philips">Philips Tempus ALS Telemetry System</option>
-                        <option value="nihon">Nihon Kohden EMS Transmitter</option>
-                    </select>
-                </div>
-
-                <div class="equipment-card">
-                    <div class="status-row">
-                        <span>Device Battery:</span>
-                        <strong style="color: var(--accent-green);" id="eqBat">94% (Charging)</strong>
-                    </div>
-                    <div class="status-row">
-                        <span>Lead Impedance Status:</span>
-                        <strong style="color: var(--accent-green);" id="eqLead">All 12 Leads Connected (Good)</strong>
-                    </div>
-                    <div class="status-row">
-                        <span>5G FirstNet Link:</span>
-                        <strong style="color: var(--accent-cyan);">5G Ultra-Wide (RSRP -78 dBm)</strong>
-                    </div>
-                    <div class="status-row">
-                        <span>Signal-to-Noise (SNR):</span>
-                        <strong id="eqSNR">42 dB (High Quality)</strong>
-                    </div>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-top: 4px;">
-                    <button class="btn" style="flex: 1;" onclick="openHL7Modal()">📄 HL7 FHIR Payload</button>
-                    <button class="btn" style="flex: 1;" onclick="downloadDICOM()">💾 DICOM-ECG Export</button>
-                </div>
-            </div>
-
-            <!-- Security & Audit Trail Panel -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">🔒 Telemetry Security & Audit Log</div>
-                </div>
-
-                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">
-                    Handoff Token: <span id="handoffToken"
-                        style="font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan);">SHA256-FETCHING...</span>
-                </div>
-
-                <div class="audit-log-box" id="auditLogBox">
-                    <!-- Logs injected here -->
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Printable Diagnostic Summary Modal -->
-    <div class="modal-overlay" id="reportModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 style="color: var(--accent-cyan);">📋 Emergency Pre-Hospital ECG Diagnostic Report</h3>
-                <button class="btn" onclick="closePrintModal()">✕ Close</button>
-            </div>
-            <div id="reportModalContent" style="font-size: 13px; line-height: 1.6;">
-                <!-- Generated content -->
-            </div>
-            <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn btn-cyan" onclick="window.print()">🖨️ Print / Save PDF</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- HL7 FHIR Payload Modal -->
-    <div class="modal-overlay" id="hl7Modal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 style="color: var(--accent-cyan);">📡 HL7 FHIR IEEE 11073 Observation JSON</h3>
-                <button class="btn" onclick="closeHL7Modal()">✕ Close</button>
-            </div>
-            <pre id="hl7JsonCode"
-                style="background: #04060a; padding: 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-green); overflow-x: auto; max-height: 400px;"></pre>
-        </div>
-    </div>
-
-    <!-- JavaScript Engine logic -->
     <script>
-        // Global Application State
-        const state = {
-            hr: 72,
-            stElevation: 0.0,
-            noiseLevel: 5,
-            tremorLevel: 0,
-            leadMode: '12lead',
-            gain: 10, // mm/mV
-            speed: 25, // mm/s
-            isFrozen: false,
-            isCaliperActive: false,
-            role: 'paramedic', // 'paramedic' or 'specialist'
-            isHIPAA: false,
-            patient: {
-                name: 'John H. Doe',
-                id: 'EMS-99481-B',
-                age: '58 / Male',
-                complaint: 'Substernal chest pain, radiating to left shoulder'
-            },
-            caliper: {
-                start: null,
-                end: null
-            },
-            sweepX: 0
-        };
 
-        // DOM Element Cache
-        const canvas = document.getElementById('ecgCanvas');
-        const ctx = canvas.getContext('2d');
+        const BACKEND_URL = "http://127.0.0.1:8000";
 
-        // Initialize Canvas & Event Listeners
-        window.addEventListener('load', () => {
-            resizeCanvas();
-            generateHandoffToken();
-            logAudit('System initialized. AES-256 E2EE handshake established with EMS Gateway.');
-            requestAnimationFrame(renderLoop);
-        });
 
-        window.addEventListener('resize', resizeCanvas);
+        /* -----------------------------------------
+           GET PATIENT ID FROM URL
+        ----------------------------------------- */
 
-        function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = 480;
-            drawCanvasGrid();
+        const params = new URLSearchParams(
+            window.location.search
+        );
+
+        const patientId = params.get("patient_id");
+
+
+        if (!patientId) {
+
+            document.getElementById("imageLoading").innerHTML =
+                "No patient ID was provided.";
+
+            throw new Error(
+                "patient_id missing from URL"
+            );
         }
 
-        // Audit Logger
-        function logAudit(msg) {
-            const box = document.getElementById('auditLogBox');
-            const now = new Date().toLocaleTimeString();
-            const div = document.createElement('div');
-            div.className = 'log-entry';
-            div.innerHTML = <span class="log-time">[${now}]</span> ${ msg };
-            box.prepend(div);
+
+        /* -----------------------------------------
+           ELEMENTS
+        ----------------------------------------- */
+
+        const patientName =
+            document.getElementById("patientName");
+
+        const patientIdEl =
+            document.getElementById("patientId");
+
+        const patientAgeGender =
+            document.getElementById("patientAgeGender");
+
+        const predictionEl =
+            document.getElementById("prediction");
+
+        const confidenceText =
+            document.getElementById("confidenceText");
+
+        const confidenceBar =
+            document.getElementById("confidenceBar");
+
+        const ecgImage =
+            document.getElementById("ecgImage");
+
+        const imageLoading =
+            document.getElementById("imageLoading");
+
+        const statusBadge =
+            document.getElementById("statusBadge");
+
+        const ecgId =
+            document.getElementById("ecgId");
+
+        const uploadStatus =
+            document.getElementById("uploadStatus");
+
+        const uploadedAt =
+            document.getElementById("uploadedAt");
+
+        const imagePath =
+            document.getElementById("imagePath");
+
+
+        /* -----------------------------------------
+           LOAD PATIENT
+        ----------------------------------------- */
+
+        async function loadPatient() {
+
+            const response = await fetch(
+                `${BACKEND_URL}/patient/${patientId}`
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Patient could not be loaded"
+                );
+            }
+
+            const patient =
+                await response.json();
+
+
+            patientName.textContent =
+                `${patient.first_name} ${patient.last_name}`;
+
+            patientIdEl.textContent =
+                patient.id;
+
+            patientAgeGender.textContent =
+                `${patient.age ?? "N/A"} / ${patient.gender ?? "N/A"}`;
         }
 
-        function generateHandoffToken() {
-            const token = 'EMS-' + Math.random().toString(36).substr(2, 9).toUpperCase() + '-2026';
-            document.getElementById('handoffToken').innerText = token;
-        }
 
-        // Canvas Grid Drawing Engine (Standard 1mm & 5mm ECG Grid)
-        function drawCanvasGrid() {
-            ctx.fillStyle = '#05080e';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        /* -----------------------------------------
+           LOAD ECG
+        ----------------------------------------- */
 
-            const gridScale = (state.gain / 10);
-            const minorStep = 10 * gridScale; // 1mm equivalent
-            const majorStep = 50 * gridScale; // 5mm equivalent
+        async function loadECG() {
 
-            // Minor grid lines
-            ctx.strokeStyle = 'rgba(255, 59, 92, 0.08)';
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            for (let x = 0; x < canvas.width; x += minorStep) {
-                ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
-            }
-            for (let y = 0; y < canvas.height; y += minorStep) {
-                ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
-            }
-            ctx.stroke();
+            console.log(
+                "Loading ECG for patient:",
+                patientId
+            );
 
-            // Major grid lines
-            ctx.strokeStyle = 'rgba(255, 59, 92, 0.22)';
-            ctx.lineWidth = 1.0;
-            ctx.beginPath();
-            for (let x = 0; x < canvas.width; x += majorStep) {
-                ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
-            }
-            for (let y = 0; y < canvas.height; y += majorStep) {
-                ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
-            }
-            ctx.stroke();
-        }
 
-        // P-Q-R-S-T Signal Synthesizer Algorithm
-        function generateECGPoint(t, leadFactor = 1.0, isST = false) {
-            const bpm = state.hr;
-            const period = 60 / bpm; // seconds per beat
-            const phase = (t % period) / period; // 0 to 1
+            const response = await fetch(
+                `${BACKEND_URL}/ecg/${patientId}`
+            );
 
-            let val = 0;
 
-            // P wave
-            if (phase > 0.1 && phase < 0.2) {
-                const pPhase = (phase - 0.1) / 0.1;
-                val += 0.15 * Math.sin(pPhase * Math.PI);
-            }
-            // Q wave
-            else if (phase >= 0.22 && phase < 0.25) {
-                val -= 0.15;
-            }
-            // R wave (Sharp Spike)
-            else if (phase >= 0.25 && phase < 0.30) {
-                const rPhase = (phase - 0.25) / 0.05;
-                val += 1.6 * Math.sin(rPhase * Math.PI);
-            }
-            // S wave
-            else if (phase >= 0.30 && phase < 0.34) {
-                val -= 0.35;
-            }
-            // ST Segment & T wave
-            else if (phase >= 0.34 && phase < 0.55) {
-                const tPhase = (phase - 0.34) / 0.21;
-                let stShift = isST ? (state.stElevation * 0.2) : 0;
-                val += stShift + 0.3 * Math.sin(tPhase * Math.PI);
+            if (!response.ok) {
+
+                throw new Error(
+                    `ECG request failed: ${response.status}`
+                );
+
             }
 
-            // Lead factor scaling
-            val *= leadFactor;
 
-            // Noise synthesis
-            if (state.noiseLevel > 0) {
-                val += (Math.random() - 0.5) * (state.noiseLevel / 100) * 0.15;
+            const ecg =
+                await response.json();
+
+
+            console.log(
+                "ECG received:",
+                ecg
+            );
+
+
+            /* -----------------------------
+               ECG METADATA
+            ----------------------------- */
+
+            ecgId.textContent =
+                ecg.id ?? "--";
+
+            uploadStatus.textContent =
+                ecg.status ?? "--";
+
+            imagePath.textContent =
+                ecg.image_path ?? "--";
+
+
+            if (ecg.uploaded_at) {
+
+                uploadedAt.textContent =
+                    new Date(
+                        ecg.uploaded_at
+                    ).toLocaleString();
+
             }
-            if (state.tremorLevel > 0) {
-                val += Math.sin(t * 50) * (state.tremorLevel / 100) * 0.1;
-            }
 
-            return val;
-        }
 
-        // Main Animation Render Loop
-        let time = 0;
-        const leads12 = ['I', 'II', 'III', 'aVR', 'aVL', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'];
-        const leadFactors = [0.8, 1.0, 0.6, -0.7, 0.7, 0.8, 0.9, 1.2, 1.4, 1.3, 1.1, 0.9];
+            /* -----------------------------
+               STATUS
+            ----------------------------- */
 
-        function renderLoop() {
-            if (!state.isFrozen) {
-                time += 0.016; // ~60fps step
-                state.sweepX = (state.sweepX + (state.speed / 25) * 2) % canvas.width;
+            const status =
+                ecg.status ?? "UNKNOWN";
 
-                drawCanvasGrid();
+            statusBadge.innerHTML = `
+        <span class="status-dot"></span>
+        ${status}
+    `;
 
-                const gainPx = (state.gain / 10) * 40;
 
-                if (state.leadMode === 'single') {
-                    // Draw single Lead II trace enlarged
-                    ctx.strokeStyle = '#00ff88';
-                    ctx.lineWidth = 2.2;
-                    ctx.beginPath();
+            /* -----------------------------
+               AI PREDICTION
+            ----------------------------- */
 
-                    const centerY = canvas.height / 2;
-                    for (let x = 0; x < canvas.width; x += 2) {
-                        const tPoint = time - (canvas.width - x) * 0.002;
-                        const isSTLead = state.stElevation > 0;
-                        const yVal = centerY - generateECGPoint(tPoint, 1.0, isSTLead) * gainPx;
-                        if (x === 0) ctx.moveTo(x, yVal);
-                        else ctx.lineTo(x, yVal);
-                    }
-                    ctx.stroke();
+            if (ecg.prediction) {
 
-                    // Lead Label
-                    ctx.fillStyle = '#00f2ff';
-                    ctx.font = '600 16px JetBrains Mono';
-                    ctx.fillText('LEAD II (FOCUS RHYTHM STRIP)', 20, 30);
-                } else {
-                    // Draw 12-Lead Matrix (4 cols x 3 rows)
-                    const cols = 3;
-                    const rows = 4;
-                    const cellW = canvas.width / cols;
-                    const cellH = canvas.height / rows;
+                const prediction =
+                    ecg.prediction;
 
-                    leads12.forEach((leadName, idx) => {
-                        const col = idx % cols;
-                        const row = Math.floor(idx / cols);
-                        const originX = col * cellW;
-                        const originY = row * cellH + cellH / 2;
+                predictionEl.textContent =
+                    prediction.replaceAll("_", " ");
 
-                        const isVLead = leadName.startsWith('V');
-                        const isSTLead = isVLead && state.stElevation > 0;
+                predictionEl.className =
+                    "prediction";
 
-                        // Draw Lead Label
-                        ctx.fillStyle = isSTLead ? '#ff3b5c' : '#94a3b8';
-                        ctx.font = '600 12px JetBrains Mono';
-                        ctx.fillText(leadName, originX + 10, originY - cellH / 2 + 18);
 
-                        // Draw Lead Trace
-                        ctx.strokeStyle = isSTLead ? '#ff3b5c' : '#00ff88';
-                        ctx.lineWidth = 1.8;
-                        ctx.beginPath();
+                if (
+                    prediction === "normal" ||
+                    prediction.includes("normal")
+                ) {
 
-                        for (let x = 0; x < cellW; x += 2) {
-                            const absX = originX + x;
-                            const tPoint = time - (cellW - x) * 0.003;
-                            const yVal = originY - generateECGPoint(tPoint, leadFactors[idx], isSTLead) * (gainPx * 0.7);
-                            if (x === 0) ctx.moveTo(absX, yVal);
-                            else ctx.lineTo(absX, yVal);
-                        }
-                        ctx.stroke();
-                    });
+                    predictionEl.classList.add(
+                        "normal"
+                    );
+
                 }
+                else if (
+                    prediction.includes("stemi")
+                ) {
+
+                    predictionEl.classList.add(
+                        "stemi"
+                    );
+
+                }
+                else {
+
+                    predictionEl.classList.add(
+                        "review"
+                    );
+
+                }
+
+            }
+            else {
+
+                predictionEl.textContent =
+                    "No prediction available";
+
             }
 
-            // Render Caliper overlay if enabled
-            if (state.isCaliperActive && state.caliper.start && state.caliper.end) {
-                ctx.strokeStyle = '#00f2ff';
-                ctx.lineWidth = 1.5;
-                ctx.setLineDash([4, 4]);
 
-                ctx.beginPath();
-                ctx.moveTo(state.caliper.start.x, 0); ctx.lineTo(state.caliper.start.x, canvas.height);
-                ctx.moveTo(state.caliper.end.x, 0); ctx.lineTo(state.caliper.end.x, canvas.height);
-                ctx.stroke();
-                ctx.setLineDash([]);
+            /* -----------------------------
+               CONFIDENCE
+            ----------------------------- */
+
+            if (
+                typeof ecg.confidence === "number"
+            ) {
+
+                const confidence =
+                    ecg.confidence;
+
+
+                confidenceText.textContent =
+                    `${confidence.toFixed(2)}%`;
+
+
+                confidenceBar.style.width =
+                    `${Math.min(confidence, 100)}%`;
+
+            }
+            else {
+
+                confidenceText.textContent =
+                    "--";
+
+                confidenceBar.style.width =
+                    "0%";
+
             }
 
-            requestAnimationFrame(renderLoop);
-        }
 
-        // Caliper Event Handlers
-        canvas.addEventListener('mousedown', (e) => {
-            if (!state.isCaliperActive) return;
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            /* -----------------------------
+               ECG IMAGE
+            ----------------------------- */
 
-            if (!state.caliper.start || (state.caliper.start && state.caliper.end)) {
-                state.caliper.start = { x, y };
-                state.caliper.end = null;
-            } else {
-                state.caliper.end = { x, y };
-                calculateCaliperMetrics();
+            if (ecg.image_path) {
+
+                /*
+                 * Backend stores paths such as:
+                 *
+                 * uploads/ecg/abc123.png
+                 *
+                 * Browser needs:
+                 *
+                 * http://127.0.0.1:8000/uploads/ecg/abc123.png
+                 */
+
+                const cleanPath =
+                    ecg.image_path
+                        .replaceAll("\\", "/")
+                        .replace(/^\/+/, "");
+
+
+                const imageURL =
+                    `${BACKEND_URL}/${cleanPath}`;
+
+
+                console.log(
+                    "ECG image URL:",
+                    imageURL
+                );
+
+
+                ecgImage.onload = () => {
+
+                    imageLoading.style.display =
+                        "none";
+
+                    ecgImage.style.display =
+                        "block";
+
+                };
+
+
+                ecgImage.onerror = () => {
+
+                    imageLoading.className =
+                        "error";
+
+                    imageLoading.textContent =
+                        "ECG image could not be loaded.";
+
+                    console.error(
+                        "Failed to load ECG image:",
+                        imageURL
+                    );
+
+                };
+
+
+                ecgImage.src =
+                    imageURL;
+
             }
-        });
+            else {
 
-        function calculateCaliperMetrics() {
-            const dx = Math.abs(state.caliper.end.x - state.caliper.start.x);
-            // 25mm/s speed calibration
-            const timeMs = Math.round((dx / (canvas.width / 4)) * 1000);
-            const bpm = timeMs > 0 ? Math.round(60000 / timeMs) : 0;
-            const volt = (Math.abs(state.caliper.end.y - state.caliper.start.y) / 40).toFixed(2);
+                imageLoading.className =
+                    "error";
 
-            document.getElementById('calTime').innerText = timeMs;
-            document.getElementById('calBpm').innerText = bpm;
-            document.getElementById('calVolt').innerText = volt;
-        }
+                imageLoading.textContent =
+                    "No ECG image was stored.";
 
-        // UI Handlers & Synthesizer Controls
-        function onSynthChange() {
-            state.hr = parseInt(document.getElementById('sliderHR').value);
-            state.stElevation = parseFloat(document.getElementById('sliderST').value);
-            state.noiseLevel = parseInt(document.getElementById('sliderNoise').value);
-            state.tremorLevel = parseInt(document.getElementById('sliderTremor').value);
-
-            document.getElementById('valSynthHR').innerText = state.hr;
-            document.getElementById('valSynthST').innerText = state.stElevation.toFixed(1);
-            document.getElementById('valSynthNoise').innerText = state.noiseLevel + '%';
-            document.getElementById('valSynthTremor').innerText = state.tremorLevel + '%';
-
-            document.getElementById('valHR').innerText = state.hr;
-            document.getElementById('valST').innerText = (state.stElevation >= 0 ? '+' : '') + state.stElevation.toFixed(1);
-
-            runDiagnosticEngine();
-        }
-
-        // Automated Diagnostic Engine Analysis
-        function runDiagnosticEngine() {
-            const hr = state.hr;
-            const st = state.stElevation;
-
-            const card = document.getElementById('diagAlertCard');
-            const heading = document.getElementById('diagHeading');
-            const body = document.getElementById('diagBody');
-            const risk = document.getElementById('mRisk');
-            const hrCard = document.getElementById('hrCard');
-            const stCard = document.getElementById('stCard');
-
-            // Reset STEMI chip highlights
-            ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'].forEach(id => {
-                document.getElementById('chip-' + id).classList.remove('stemi');
-            });
-
-            if (st >= 2.0) {
-                card.className = 'diagnostic-alert-card';
-                heading.innerHTML = '🚨 CRITICAL: ACUTE ANTERIOR STEMI DETECTED';
-                body.innerHTML = Significant ST - segment elevation(+${ st.toFixed(1) } mm) observed in precordial leads V1 - V4.High probability of acute LAD artery occlusion.Immediate PCI Cardiac Cath Lab activation recommended!;
-                risk.innerText = 'HIGH (CRITICAL)';
-                risk.style.color = '#ff3b5c';
-                hrCard.className = 'vital-card red';
-                stCard.className = 'vital-card red';
-
-                ['V1', 'V2', 'V3', 'V4'].forEach(id => document.getElementById('chip-' + id).classList.add('stemi'));
-                logAudit('DIAGNOSTIC ALERT: ST-Elevation Myocardial Infarction rule triggered (+ ' + st + 'mm V1-V4).');
-            } else if (hr > 130 && st < 2.0) {
-                card.className = 'diagnostic-alert-card';
-                heading.innerHTML = '⚠️ ATRIAL FIBRILLATION WITH RVR';
-                body.innerHTML = 'Rapid irregular ventricular response detected. Absence of distinct P-waves with variable R-R intervals. Rate control protocol advised.';
-                risk.innerText = 'MODERATE';
-                risk.style.color = '#ffb800';
-                hrCard.className = 'vital-card amber';
-                stCard.className = 'vital-card green';
-            } else if (hr < 50) {
-                card.className = 'diagnostic-alert-card';
-                heading.innerHTML = '📉 SINUS BRADYCARDIA ALERT';
-                body.innerHTML = 'Depressed intrinsic sinus node rate (< 50 BPM). Monitor for hemodynamic instability or symptomatic hypotension.';
-                risk.innerText = 'MODERATE';
-                risk.style.color = '#ffb800';
-                hrCard.className = 'vital-card amber';
-            } else {
-                card.className = 'diagnostic-alert-card normal';
-                heading.innerHTML = '✔️ NORMAL SINUS RHYTHM';
-                body.innerHTML = 'Normal baseline cardiac conduction. No significant ST-segment elevation or depression detected across leads I-III, aVR-aVF, V1-V6.';
-                risk.innerText = 'LOW';
-                risk.style.color = '#00ff88';
-                hrCard.className = 'vital-card green';
-                stCard.className = 'vital-card green';
             }
 
-            // Recalculate Intervals
-            const qtc = Math.round(380 / Math.sqrt(60 / hr));
-            document.getElementById('mQT').innerText = 380 / ${ qtc } ms;
         }
 
-        // Quick Clinical Scenario Loaders
-        function loadPreset(type) {
-            if (type === 'stemi') {
-                document.getElementById('sliderHR').value = 118;
-                document.getElementById('sliderST').value = 3.5;
-                document.getElementById('sliderNoise').value = 5;
-                logAudit('Preset loaded: Acute Anterior STEMI Emergency (HR 118, ST +3.5mm)');
-            } else if (type === 'afib') {
-                document.getElementById('sliderHR').value = 145;
-                document.getElementById('sliderST').value = 0.5;
-                document.getElementById('sliderNoise').value = 25;
-                logAudit('Preset loaded: Atrial Fibrillation with Rapid Ventricular Response');
-            } else if (type === 'brady') {
-                document.getElementById('sliderHR').value = 42;
-                document.getElementById('sliderST').value = -1.5;
-                document.getElementById('sliderNoise').value = 5;
-                logAudit('Preset loaded: Sinus Bradycardia with ST Depression');
-            } else if (type === 'nsr') {
-                document.getElementById('sliderHR').value = 72;
-                document.getElementById('sliderST').value = 0.0;
-                document.getElementById('sliderNoise').value = 5;
-                logAudit('Preset loaded: Normal Sinus Rhythm (NSR)');
+
+        /* -----------------------------------------
+           INITIALIZE
+        ----------------------------------------- */
+
+        async function initializeViewer() {
+
+            try {
+
+                await loadPatient();
+
+                await loadECG();
+
+                console.log(
+                    "ECG viewer initialized successfully."
+                );
+
             }
-            onSynthChange();
-        }
+            catch (error) {
 
-        // Control Toggles
-        function updateCanvasMode() {
-            state.leadMode = document.getElementById('leadModeSelect').value;
-            drawCanvasGrid();
-            logAudit('Canvas Lead Display changed to: ' + state.leadMode);
-        }
+                console.error(
+                    "ECG viewer error:",
+                    error
+                );
 
-        function toggleFreeze() {
-            state.isFrozen = !state.isFrozen;
-            const btn = document.getElementById('freezeBtn');
-            btn.innerText = state.isFrozen ? '▶️ Resume' : '⏸️ Freeze';
-            logAudit(state.isFrozen ? 'Waveform trace frozen for caliper analysis.' : 'Waveform trace resumed live.');
-        }
 
-        function toggleCaliper() {
-            state.isCaliperActive = !state.isCaliperActive;
-            const btn = document.getElementById('caliperBtn');
-            const bar = document.getElementById('caliperBar');
-            btn.innerText = state.isCaliperActive ? 'On' : 'Off';
-            btn.style.background = state.isCaliperActive ? 'var(--accent-cyan)' : '';
-            btn.style.color = state.isCaliperActive ? '#000' : '';
-            bar.style.display = state.isCaliperActive ? 'flex' : 'none';
-        }
+                imageLoading.className =
+                    "error";
 
-        function toggleRole() {
-            state.role = state.role === 'paramedic' ? 'specialist' : 'paramedic';
-            document.getElementById('roleBadge').innerText = state.role === 'paramedic' ? 'EMS PARAMEDIC MODE' : 'HOSPITAL CARDIOLOGIST VIEW';
-            logAudit('User Role switched to: ' + state.role.toUpperCase());
-        }
+                imageLoading.textContent =
+                    error.message ||
+                    "Unable to load ECG data.";
 
-        function toggleHIPAA() {
-            state.isHIPAA = !state.isHIPAA;
-            const btn = document.getElementById('hipaaBtn');
-            btn.style.background = state.isHIPAA ? 'var(--accent-green)' : '';
-            btn.style.color = state.isHIPAA ? '#000' : '';
-            updatePatientData();
-            logAudit('HIPAA PHI Anonymization toggle set to: ' + state.isHIPAA);
-        }
-
-        function updatePatientData() {
-            const name = document.getElementById('pName').value;
-            const id = document.getElementById('pID').value;
-            state.patient.name = name;
-            state.patient.id = id;
-
-            if (state.isHIPAA) {
-                document.getElementById('pName').value = 'ANON-PATIENT-9948';
-                document.getElementById('pID').value = '*-**-4428';
             }
+
         }
 
-        function dispatchTeleCardiology() {
-            alert('📡 TELE-CARDIOLOGY DISPATCH SENT!\n\n12-Lead ECG Stream & Encrypted Payload transmitted to St. Jude Regional Cardiac PCI Center.\nCath Lab Team Alerted!');
-            logAudit('ALERT DISPATCHED: Encrypted 12-lead payload transmitted to Hospital Cardiac PCI Receiving Unit.');
-        }
 
-        function onDriverChange() {
-            const drv = document.getElementById('eqDriver').value;
-            logAudit('Ambulance Equipment Hardware Driver changed to: ' + drv.toUpperCase());
-        }
+        initializeViewer();
 
-        // Modal Functions
-        function openPrintModal() {
-            const modal = document.getElementById('reportModal');
-            const content = document.getElementById('reportModalContent');
-            const now = new Date().toLocaleString();
-
-            content.innerHTML = `
-                <div style="border-bottom: 2px solid var(--accent-cyan); padding-bottom: 10px; margin-bottom: 12px;">
-                    <strong>APEX EMS CARDIOVASCULAR TELEMETRY REPORT</strong><br>
-                    <span style="color: var(--text-muted);">Timestamp: ${now} | EMS Unit: Medic-71</span>
-                </div>
-                <p><strong>Patient Name:</strong> ${state.patient.name} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>ID:</strong> ${state.patient.id}</p>
-                <p><strong>Heart Rate:</strong> ${state.hr} BPM &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Max ST Displacement:</strong> ${state.stElevation.toFixed(1)} mm</p>
-                <br>
-                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 6px;">
-                    <strong>CLINICAL INTERPRETATION:</strong><br>
-                    ${document.getElementById('diagBody').innerText}
-                </div>
-                <br>
-                <p><strong>Security Handoff Token:</strong> ${document.getElementById('handoffToken').innerText}</p>
-                <p><strong>Paramedic Sign-off:</strong> Paramedic J. Vance (Badge #4492)</p>
-            `;
-            modal.classList.add('active');
-        }
-
-        function closePrintModal() {
-            document.getElementById('reportModal').classList.remove('active');
-        }
-
-        function openHL7Modal() {
-            const modal = document.getElementById('hl7Modal');
-            const code = document.getElementById('hl7JsonCode');
-            const hl7Data = {
-                resourceType: "Observation",
-                id: "ecg-telemetry-" + Date.now(),
-                status: "final",
-                category: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/observation-category", code: "procedure" }] }],
-                code: { coding: [{ system: "http://loinc.org", code: "11524-6", display: "EKG study" }] },
-                subject: { display: state.patient.name, identifier: { value: state.patient.id } },
-                effectiveDateTime: new Date().toISOString(),
-                component: [
-                    { code: { coding: [{ code: "8867-4", display: "Heart rate" }] }, valueQuantity: { value: state.hr, unit: "/min" } },
-                    { code: { coding: [{ code: "8870-8", display: "ST Segment elevation" }] }, valueQuantity: { value: state.stElevation, unit: "mm" } }
-                ],
-                device: { display: document.getElementById('eqDriver').value.toUpperCase() + " Monitor Driver v3.4" }
-            };
-            code.innerText = JSON.stringify(hl7Data, null, 2);
-            modal.classList.add('active');
-        }
-
-        function closeHL7Modal() {
-            document.getElementById('hl7Modal').classList.remove('active');
-        }
-
-        function downloadDICOM() {
-            const xmlData = `<?xml version="1.0" encoding="UTF-8"?>
-<DICOMECGStudy xmlns="http://dicom.nema.org/medical/dicom">
-    <PatientID>${state.patient.id}</PatientID>
-    <PatientName>${state.patient.name}</PatientName>
-    <AcquisitionDateTime>${new Date().toISOString()}</AcquisitionDateTime>
-    <SamplingFrequencyHz>500</SamplingFrequencyHz>
-    <HeartRateBPM>${state.hr}</HeartRateBPM>
-    <STElevationMM>${state.stElevation}</STElevationMM>
-</DICOMECGStudy>`;
-            const blob = new Blob([xmlData], { type: 'application/xml' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = DICOM_ECG_${ state.patient.id }.xml;
-            a.click();
-            logAudit('DICOM-ECG XML file exported successfully.');
-        }
     </script>
+
 </body>
+
+</html>

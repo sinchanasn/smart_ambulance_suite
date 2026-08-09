@@ -296,30 +296,184 @@
 
     <script>
 
-        function assessRisk() {
 
-            // Get input values
-            let heartRate = Number(document.getElementById("heartRate").value);
-            let bloodPressure = document.getElementById("bloodPressure").value;
-            let spo2 = Number(document.getElementById("spo2").value);
-            let respRate = Number(document.getElementById("respRate").value);
-            let temperature = Number(document.getElementById("temperature").value);
-            let glucose = Number(document.getElementById("glucose").value);
-            let gcs = Number(document.getElementById("gcs").value);
+
+        const API_URL = "http://127.0.0.1:8000";
+
+        async function assessRisk() {
+
+            // --------------------------------------------------
+            // GET PATIENT ID
+            // --------------------------------------------------
+
+            const patientId = localStorage.getItem("patientId");
+
+            if (!patientId) {
+                alert("Patient ID not found. Please register the patient first.");
+                return;
+            }
+
+
+            // --------------------------------------------------
+            // GET VITAL VALUES
+            // --------------------------------------------------
+
+            const heartRate =
+                Number(document.getElementById("heartRate").value);
+
+            const bloodPressure =
+                document.getElementById("bloodPressure").value.trim();
+
+            const spo2 =
+                Number(document.getElementById("spo2").value);
+
+            const respRate =
+                Number(document.getElementById("respRate").value);
+
+            const temperature =
+                Number(document.getElementById("temperature").value);
+
+            const glucose =
+                Number(document.getElementById("glucose").value);
+
+            const gcs =
+                Number(document.getElementById("gcs").value);
+
+
+            // --------------------------------------------------
+            // SAVE VITALS LOCALLY
+            // This allows success/result page to display them.
+            // --------------------------------------------------
+
+            const vitalsData = {
+
+                heart_rate:
+                    heartRate || null,
+
+                blood_pressure:
+                    bloodPressure || null,
+
+                spo2:
+                    spo2 || null,
+
+                respiratory_rate:
+                    respRate || null,
+
+                temperature:
+                    temperature || null,
+
+                glucose:
+                    glucose || null,
+
+                gcs:
+                    gcs || null
+            };
+
+
+            localStorage.setItem(
+                "vitalsData",
+                JSON.stringify(vitalsData)
+            );
+
+
+            // --------------------------------------------------
+            // SEND VITALS TO BACKEND
+            // --------------------------------------------------
+
+            try {
+
+                const response = await fetch(
+                    `${API_URL}/vitals/`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            patient_id:
+                                Number(patientId),
+
+                            heart_rate:
+                                heartRate || null,
+
+                            blood_pressure:
+                                bloodPressure || null,
+
+                            spo2:
+                                spo2 || null,
+
+                            temperature:
+                                temperature || null,
+
+                            respiratory_rate:
+                                respRate || null
+                        })
+                    }
+                );
+
+
+                if (!response.ok) {
+
+                    const errorText =
+                        await response.text();
+
+                    console.error(
+                        "Backend vitals error:",
+                        errorText
+                    );
+
+                    throw new Error(
+                        `Vitals upload failed: ${response.status}`
+                    );
+                }
+
+
+                const savedVitals =
+                    await response.json();
+
+                console.log(
+                    "Vitals successfully saved to backend:",
+                    savedVitals
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Could not save vitals:",
+                    error
+                );
+
+                alert(
+                    "Vitals could not be saved to the backend. Check that the backend is running."
+                );
+
+                return;
+            }
+
+
+            // --------------------------------------------------
+            // AI / RULE-BASED RISK ASSESSMENT
+            // --------------------------------------------------
 
             let riskScore = 0;
+
             let alerts = [];
 
-            // -------------------------
-            // SpO2 assessment
-            // -------------------------
+
+            // --------------------------------------------------
+            // SpO2
+            // --------------------------------------------------
 
             if (spo2 > 0 && spo2 < 90) {
 
                 riskScore += 3;
 
                 alerts.push(
-                    "🚨 SpO₂ is critically low. Immediate medical attention required."
+                    "SpO₂ is critically low. Immediate medical attention required."
                 );
 
             } else if (spo2 > 0 && spo2 < 94) {
@@ -327,101 +481,121 @@
                 riskScore += 2;
 
                 alerts.push(
-                    "⚠️ SpO₂ is below the normal range. Monitor oxygen level closely."
+                    "SpO₂ is below the normal range. Monitor oxygen level closely."
                 );
             }
 
 
-            // -------------------------
-            // Heart rate assessment
-            // -------------------------
+            // --------------------------------------------------
+            // HEART RATE
+            // --------------------------------------------------
 
-            if (heartRate > 0 && (heartRate < 50 || heartRate > 120)) {
+            if (
+                heartRate > 0 &&
+                (heartRate < 50 || heartRate > 120)
+            ) {
 
                 riskScore += 2;
 
                 alerts.push(
-                    "⚠️ Abnormal heart rate detected. Monitor patient's pulse."
+                    "Abnormal heart rate detected. Monitor patient's pulse."
                 );
             }
 
 
-            // -------------------------
-            // Respiratory rate
-            // -------------------------
+            // --------------------------------------------------
+            // RESPIRATORY RATE
+            // --------------------------------------------------
 
-            if (respRate > 0 && (respRate < 10 || respRate > 25)) {
+            if (
+                respRate > 0 &&
+                (respRate < 10 || respRate > 25)
+            ) {
 
                 riskScore += 2;
 
                 alerts.push(
-                    "⚠️ Abnormal respiratory rate detected."
+                    "Abnormal respiratory rate detected."
                 );
             }
 
 
-            // -------------------------
-            // Temperature
-            // -------------------------
+            // --------------------------------------------------
+            // TEMPERATURE
+            // --------------------------------------------------
 
             if (temperature > 0 && temperature >= 39) {
 
                 riskScore += 2;
 
                 alerts.push(
-                    "🌡️ High body temperature detected."
+                    "High body temperature detected."
                 );
 
-            } else if (temperature > 0 && temperature < 35) {
+            } else if (
+                temperature > 0 &&
+                temperature < 35
+            ) {
 
                 riskScore += 3;
 
                 alerts.push(
-                    "🚨 Body temperature is critically low."
+                    "Body temperature is critically low."
                 );
             }
 
 
-            // -------------------------
-            // Blood Pressure
-            // -------------------------
+            // --------------------------------------------------
+            // BLOOD PRESSURE
+            // --------------------------------------------------
 
             if (bloodPressure.includes("/")) {
 
-                let bp = bloodPressure.split("/");
+                const bp =
+                    bloodPressure.split("/");
 
-                let systolic = Number(bp[0]);
-                let diastolic = Number(bp[1]);
+                const systolic =
+                    Number(bp[0]);
 
-                if (systolic >= 180 || diastolic >= 120) {
+                const diastolic =
+                    Number(bp[1]);
+
+
+                if (
+                    systolic >= 180 ||
+                    diastolic >= 120
+                ) {
 
                     riskScore += 3;
 
                     alerts.push(
-                        "🚨 Blood pressure is critically high."
+                        "Blood pressure is critically high."
                     );
 
-                } else if (systolic < 90 || diastolic < 60) {
+                } else if (
+                    systolic < 90 ||
+                    diastolic < 60
+                ) {
 
                     riskScore += 2;
 
                     alerts.push(
-                        "⚠️ Blood pressure is low. Monitor patient closely."
+                        "Blood pressure is low. Monitor patient closely."
                     );
                 }
             }
 
 
-            // -------------------------
-            // Blood glucose
-            // -------------------------
+            // --------------------------------------------------
+            // BLOOD GLUCOSE
+            // --------------------------------------------------
 
             if (glucose > 0 && glucose < 70) {
 
                 riskScore += 2;
 
                 alerts.push(
-                    "⚠️ Blood glucose is low."
+                    "Blood glucose is low."
                 );
 
             } else if (glucose > 250) {
@@ -429,21 +603,21 @@
                 riskScore += 2;
 
                 alerts.push(
-                    "⚠️ Blood glucose is very high."
+                    "Blood glucose is very high."
                 );
             }
 
 
-            // -------------------------
-            // GCS assessment
-            // -------------------------
+            // --------------------------------------------------
+            // GCS
+            // --------------------------------------------------
 
             if (gcs > 0 && gcs <= 8) {
 
                 riskScore += 3;
 
                 alerts.push(
-                    "🚨 Low GCS score detected. Immediate medical assessment required."
+                    "Low GCS score detected. Immediate medical assessment required."
                 );
 
             } else if (gcs > 0 && gcs <= 12) {
@@ -451,24 +625,32 @@
                 riskScore += 2;
 
                 alerts.push(
-                    "⚠️ Reduced consciousness level detected."
+                    "Reduced consciousness level detected."
                 );
             }
 
 
-            // -------------------------
-            // Final Risk Assessment
-            // -------------------------
+            // --------------------------------------------------
+            // DISPLAY RISK
+            // --------------------------------------------------
 
-            let riskLevel = document.getElementById("riskLevel");
-            let riskDescription = document.getElementById("riskDescription");
-            let alertBox = document.getElementById("alerts");
+            const riskLevel =
+                document.getElementById("riskLevel");
+
+            const riskDescription =
+                document.getElementById("riskDescription");
+
+            const alertBox =
+                document.getElementById("alerts");
 
 
             if (riskScore >= 6) {
 
-                riskLevel.innerHTML = "🔴 CRITICAL RISK";
-                riskLevel.style.color = "#d00000";
+                riskLevel.innerHTML =
+                    "CRITICAL RISK";
+
+                riskLevel.style.color =
+                    "#d00000";
 
                 riskDescription.innerHTML =
                     "Immediate medical attention and rapid intervention recommended.";
@@ -477,8 +659,11 @@
 
             else if (riskScore >= 3) {
 
-                riskLevel.innerHTML = "🟡 MODERATE RISK";
-                riskLevel.style.color = "#d68c00";
+                riskLevel.innerHTML =
+                    "MODERATE RISK";
+
+                riskLevel.style.color =
+                    "#d68c00";
 
                 riskDescription.innerHTML =
                     "Patient requires close monitoring and medical evaluation.";
@@ -487,22 +672,25 @@
 
             else {
 
-                riskLevel.innerHTML = "🟢 LOW RISK";
-                riskLevel.style.color = "#188038";
+                riskLevel.innerHTML =
+                    "LOW RISK";
+
+                riskLevel.style.color =
+                    "#188038";
 
                 riskDescription.innerHTML =
                     "Current vital signs do not indicate major abnormalities.";
             }
 
 
-            // -------------------------
-            // Display Alerts
-            // -------------------------
+            // --------------------------------------------------
+            // DISPLAY ALERTS
+            // --------------------------------------------------
 
             if (alerts.length === 0) {
 
                 alertBox.innerHTML =
-                    '<div class="alert normal">✅ No major alerts detected.</div>';
+                    '<div class="alert normal">No major alerts detected.</div>';
 
             } else {
 
@@ -510,19 +698,37 @@
 
                 alerts.forEach(function (alert) {
 
-                    let className = alert.includes("🚨")
-                        ? "critical"
-                        : "warning";
+                    const className =
+                        alert.includes("critically") ||
+                            alert.includes("critically low") ||
+                            alert.includes("Immediate")
+                            ? "critical"
+                            : "warning";
+
 
                     alertBox.innerHTML +=
-                        '<div class="alert ' + className + '">' +
+                        '<div class="alert ' +
+                        className +
+                        '">' +
                         alert +
                         '</div>';
                 });
             }
+
+
+            console.log(
+                "Risk assessment completed:",
+                {
+                    patientId,
+                    riskScore,
+                    vitals: vitalsData
+                }
+            );
+
         }
 
     </script>
+
 
 </body>
 

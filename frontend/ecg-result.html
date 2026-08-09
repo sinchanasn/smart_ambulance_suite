@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    ```
+    <title>ECG Analysis Report</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #eef7f8;
+            color: #163b40;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #006d77, #0096a6);
+            color: white;
+            padding: 25px 40px;
+        }
+
+        header h1 {
+            font-size: 28px;
+        }
+
+        header p {
+            margin-top: 6px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            color: #006d77;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e4f1f2;
+            padding-bottom: 12px;
+        }
+
+        .patient-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .detail {
+            background: #f4fafb;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .detail-label {
+            font-size: 13px;
+            color: #668083;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .analysis-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .ecg-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border: 1px solid #d8e8e9;
+            border-radius: 12px;
+            background: #fafafa;
+        }
+
+        .result-box {
+            padding: 25px;
+            border-radius: 14px;
+            background: #f4fafb;
+        }
+
+        .result-label {
+            color: #668083;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .prediction {
+            font-size: 30px;
+            font-weight: bold;
+            color: #006d77;
+            margin-bottom: 25px;
+        }
+
+        .confidence {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            background: #e8f5f6;
+            margin-top: 15px;
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 13px 22px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .primary-button {
+            background: #006d77;
+            color: white;
+        }
+
+        .secondary-button {
+            background: #dceff1;
+            color: #006d77;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+        }
+
+        @media (max-width: 750px) {
+            .analysis-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-grid,
+            .vitals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 20px;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    <header>
+        <h1>
+            <i class="fa-solid fa-heart-pulse"></i>
+            ECG Analysis Report
+        </h1>
+        <p>Patient-specific ECG and AI analysis</p>
+    </header>
+
+    <div class="container">
+
+        ```
+        <div id="loading" class="card loading">
+            Loading patient report...
+        </div>
+
+        <div id="report" style="display: none;">
+
+            <!-- PATIENT DETAILS -->
+            <div class="card">
+                <h2>
+                    <i class="fa-solid fa-user"></i>
+                    Patient Details
+                </h2>
+
+                <div class="patient-grid">
+
+                    <div class="detail">
+                        <div class="detail-label">Patient ID</div>
+                        <div class="detail-value" id="patientId">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">Patient Name</div>
+                        <div class="detail-value" id="patientName">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">Age</div>
+                        <div class="detail-value" id="patientAge">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">Gender</div>
+                        <div class="detail-value" id="patientGender">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">Symptoms</div>
+                        <div class="detail-value" id="patientSymptoms">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">Triage Priority</div>
+                        <div class="detail-value" id="triagePriority">-</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- VITALS -->
+            <div class="card">
+                <h2>
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    Patient Vitals
+                </h2>
+
+                <div class="vitals-grid">
+
+                    <div class="detail">
+                        <div class="detail-label">Heart Rate</div>
+                        <div class="detail-value" id="heartRate">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">Blood Pressure</div>
+                        <div class="detail-value" id="bloodPressure">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">SpO₂</div>
+                        <div class="detail-value" id="spo2">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">Temperature</div>
+                        <div class="detail-value" id="temperature">-</div>
+                    </div>
+
+                    <div class="detail">
+                        <div class="detail-label">Respiratory Rate</div>
+                        <div class="detail-value" id="respiratoryRate">-</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ECG + AI -->
+            <div class="card">
+
+                <h2>
+                    <i class="fa-solid fa-brain"></i>
+                    AI ECG Analysis
+                </h2>
+
+                <div class="analysis-layout">
+
+                    <div>
+                        <h3 style="margin-bottom: 12px;">
+                            Uploaded ECG
+                        </h3>
+
+                        <img id="ecgImage" class="ecg-image" alt="Uploaded ECG">
+                    </div>
+
+                    <div class="result-box">
+
+                        <div class="result-label">
+                            AI Prediction
+                        </div>
+
+                        <div class="prediction" id="prediction">
+                            -
+                        </div>
+
+                        <div class="result-label">
+                            AI Confidence
+                        </div>
+
+                        <div class="confidence" id="confidence">
+                            -
+                        </div>
+
+                        <div class="status">
+
+                            <div class="result-label">
+                                ECG Status
+                            </div>
+
+                            <strong id="ecgStatus">
+                                -
+                            </strong>
+
+                        </div>
+
+                        <div class="status">
+
+                            <div class="result-label">
+                                Recommendation
+                            </div>
+
+                            <strong id="recommendation">
+                                -
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="button-row">
+
+                <button class="secondary-button" onclick="window.location.href='ecg.html'">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Back to ECG
+                </button>
+
+                <button class="primary-button" onclick="window.location.href='dashboard.html'">
+                    <i class="fa-solid fa-hospital"></i>
+                    Hospital Dashboard
+                </button>
+
+            </div>
+
+        </div>
+        ```
+
+    </div>
+
+    <script>
+
+        function formatPrediction(value) {
+
+            if (!value) {
+                return "Not available";
+            }
+
+            return String(value)
+                .replaceAll("_", " ")
+                .replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+
+        function formatConfidence(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+                return "N/A";
+            }
+
+            const numericValue = Number(value);
+
+            if (Number.isNaN(numericValue)) {
+                return "N/A";
+            }
+
+            const percentage =
+                numericValue <= 1
+                    ? numericValue * 100
+                    : numericValue;
+
+            return `${Math.max(0, Math.min(100, percentage)).toFixed(2)}%`;
+        }
+
+
+        function getRecommendation(prediction) {
+
+            const value =
+                String(prediction || "").toLowerCase();
+
+            if (value.includes("stemi")) {
+                return "Immediate cardiologist review recommended.";
+            }
+
+            if (value.includes("review")) {
+                return "Cardiologist review recommended.";
+            }
+
+            if (value.includes("normal")) {
+                return "No abnormality detected by the AI model. Clinical assessment is still required.";
+            }
+
+            return "Clinical assessment recommended.";
+        }
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const patientData =
+                JSON.parse(
+                    localStorage.getItem("patientData") || "{}"
+                );
+
+            const vitalsData =
+                JSON.parse(
+                    localStorage.getItem("vitalsData") || "{}"
+                );
+
+            const ecgResult =
+                JSON.parse(
+                    localStorage.getItem("ecgResult") || "{}"
+                );
+
+
+            // -----------------------------
+            // PATIENT DETAILS
+            // -----------------------------
+
+            document.getElementById("patientId").textContent =
+                localStorage.getItem("patientId") || "-";
+
+            document.getElementById("patientName").textContent =
+                `${patientData.first_name || ""} ${patientData.last_name || ""}`.trim() || "-";
+
+            document.getElementById("patientAge").textContent =
+                patientData.age ?? "-";
+
+            document.getElementById("patientGender").textContent =
+                patientData.gender || "-";
+
+            document.getElementById("patientSymptoms").textContent =
+                patientData.medical_notes || "-";
+
+            document.getElementById("triagePriority").textContent =
+                patientData.triage_priority || "-";
+
+
+            // -----------------------------
+            // VITALS
+            // -----------------------------
+
+            document.getElementById("heartRate").textContent =
+                vitalsData.heart_rate != null
+                    ? `${vitalsData.heart_rate} bpm`
+                    : "-";
+
+            document.getElementById("bloodPressure").textContent =
+                vitalsData.blood_pressure || "-";
+
+            document.getElementById("spo2").textContent =
+                vitalsData.spo2 != null
+                    ? `${vitalsData.spo2}%`
+                    : "-";
+
+            document.getElementById("temperature").textContent =
+                vitalsData.temperature != null
+                    ? `${vitalsData.temperature} °C`
+                    : "-";
+
+            document.getElementById("respiratoryRate").textContent =
+                vitalsData.respiratory_rate != null
+                    ? `${vitalsData.respiratory_rate} /min`
+                    : "-";
+
+
+            // -----------------------------
+            // AI RESULT
+            // -----------------------------
+
+            const prediction =
+                ecgResult.prediction ||
+                ecgResult.ai_prediction ||
+                ecgResult.classification ||
+                null;
+
+            document.getElementById("prediction").textContent =
+                formatPrediction(prediction);
+
+            document.getElementById("confidence").textContent =
+                formatConfidence(ecgResult.confidence);
+
+            document.getElementById("ecgStatus").textContent =
+                ecgResult.status || "Analysis completed";
+
+            document.getElementById("recommendation").textContent =
+                getRecommendation(prediction);
+
+
+            // -----------------------------
+            // ECG IMAGE
+            // -----------------------------
+
+            const imageElement =
+                document.getElementById("ecgImage");
+
+            const storedImage =
+                localStorage.getItem("ecgImagePreview");
+
+            if (storedImage) {
+
+                imageElement.src =
+                    storedImage;
+
+            } else {
+
+                imageElement.style.display =
+                    "none";
+            }
+
+
+            document.getElementById("loading").style.display =
+                "none";
+
+            document.getElementById("report").style.display =
+                "block";
+
+        });
+
+    </script>
+
+</body>
+
+</html>

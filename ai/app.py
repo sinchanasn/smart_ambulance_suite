@@ -12,7 +12,7 @@ app = FastAPI()
 
 # Load model once when server starts
 model = tf.keras.models.load_model(
-    "ecg_classifier.keras"
+    "model/ecg_classifier.keras"
 )
 
 

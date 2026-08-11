@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.database.connection import Base, engine
 from app.database import models
@@ -14,8 +15,6 @@ app = FastAPI(
     title="Smart Ambulance Backend",
     version="1.0.0"
 )
-
-from fastapi.staticfiles import StaticFiles
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 

@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Ambulance AI - Priority Queue</title>
-
+    <title>Smart Ambulance AI - Hospital Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +19,6 @@
             min-height: 100vh;
         }
 
-        /* Header */
         header {
             background: #0d151f;
             border-bottom: 1px solid #263442;
@@ -64,7 +62,6 @@
             font-size: 13px;
         }
 
-        /* Main */
         .container {
             width: 92%;
             max-width: 1250px;
@@ -84,7 +81,12 @@
             margin-top: 7px;
         }
 
-        /* Statistics */
+        .refresh-info {
+            color: #6f8293;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -121,10 +123,9 @@
             color: #43e6a2;
         }
 
-        /* Layout */
         .dashboard {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 1fr;
             gap: 22px;
         }
 
@@ -135,65 +136,6 @@
             padding: 22px;
         }
 
-        .panel h3 {
-            margin-bottom: 18px;
-        }
-
-        /* Form */
-        label {
-            display: block;
-            color: #9eacba;
-            font-size: 13px;
-            margin-bottom: 7px;
-        }
-
-        input,
-        select {
-            width: 100%;
-            background: #080d14;
-            color: white;
-            border: 1px solid #334454;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 16px;
-            outline: none;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: #43c7d9;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .add-btn {
-            background: #1d9db2;
-            color: white;
-        }
-
-        .add-btn:hover {
-            background: #27b4ca;
-        }
-
-        .emergency-btn {
-            background: #b8323c;
-            color: white;
-            margin-top: 10px;
-        }
-
-        .emergency-btn:hover {
-            background: #d53f4a;
-        }
-
-        /* Queue */
         .queue-header {
             display: flex;
             justify-content: space-between;
@@ -213,27 +155,32 @@
             background: #0b121a;
             border: 1px solid #293846;
             border-radius: 10px;
-            padding: 17px;
-            margin-bottom: 12px;
+            padding: 20px;
+            margin-bottom: 14px;
+        }
+
+        .patient-top {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            gap: 20px;
         }
 
         .patient-info {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 13px;
         }
 
         .priority-icon {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         .critical-icon {
@@ -252,18 +199,21 @@
         }
 
         .patient-info h4 {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            font-size: 18px;
         }
 
         .patient-info small {
             color: #7f909f;
+            line-height: 1.7;
         }
 
         .priority-badge {
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 15px;
             font-size: 11px;
             font-weight: bold;
+            white-space: nowrap;
         }
 
         .critical {
@@ -281,13 +231,87 @@
             background: #112b22;
         }
 
+        .patient-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid #24313d;
+        }
+
+        .detail-box {
+            background: #101923;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .detail-box span {
+            display: block;
+            color: #718292;
+            font-size: 11px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .detail-box strong {
+            font-size: 13px;
+        }
+
+        .ai-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 9px;
+            background: #151f2a;
+            border: 1px solid #304453;
+        }
+
+        .ai-result-title {
+            color: #43c7d9;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .ai-prediction {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .ai-confidence {
+            color: #9eacba;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .notes {
+            margin-top: 14px;
+            color: #9eacba;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
         .empty {
             text-align: center;
-            padding: 50px 10px;
+            padding: 60px 10px;
             color: #718292;
         }
 
-        /* Current Priority */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #8fd9e5;
+        }
+
+        .error {
+            background: #35151a;
+            border: 1px solid #673039;
+            color: #ff8790;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
         .next-patient {
             margin-top: 20px;
             background: #151f2a;
@@ -306,27 +330,12 @@
             margin-bottom: 5px;
         }
 
-        .remove-btn {
-            margin-top: 12px;
-            background: #222e39;
-            color: #ff6670;
-            border: 1px solid #4a3035;
-            padding: 9px 13px;
-            border-radius: 7px;
-            cursor: pointer;
-        }
-
-        .remove-btn:hover {
-            background: #35171c;
-        }
-
-        /* Responsive */
         @media (max-width: 900px) {
-            .dashboard {
-                grid-template-columns: 1fr;
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .stats {
+            .patient-details {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -344,20 +353,22 @@
                 grid-template-columns: 1fr;
             }
 
-            .patient {
-                align-items: flex-start;
-                gap: 10px;
+            .patient-top {
+                flex-direction: column;
+            }
+
+            .patient-details {
+                grid-template-columns: 1fr;
             }
         }
     </style>
+
 </head>
 
 <body>
-
     <header>
         <div class="logo">
             <div class="logo-icon">✚</div>
-
             <div>
                 <h1>Smart Ambulance AI</h1>
                 <span>Emergency Response System</span>
@@ -367,18 +378,17 @@
         <div class="status">
             ● SYSTEM ONLINE
         </div>
+
     </header>
-
-
     <main class="container">
-
         <div class="page-title">
             <h2>🚑 Emergency Priority Queue</h2>
-            <p>AI-assisted patient prioritization for ambulance and emergency response.</p>
+            <p>Patients received from the ambulance system.</p>
+            <div class="refresh-info">
+                Automatically synchronizes with the hospital backend.
+            </div>
         </div>
 
-
-        <!-- Statistics -->
         <section class="stats">
 
             <div class="stat-card">
@@ -403,51 +413,8 @@
 
         </section>
 
-
         <section class="dashboard">
 
-            <!-- Add Patient -->
-            <div class="panel">
-
-                <h3>➕ Add Patient to Queue</h3>
-
-                <label>Patient Name</label>
-                <input type="text" id="patientName" placeholder="Enter patient name">
-
-                <label>Patient ID</label>
-                <input type="text" id="patientId" placeholder="AMB-001">
-
-                <label>Age</label>
-                <input type="number" id="patientAge" placeholder="Age" min="0" max="120">
-
-                <label>Emergency Type</label>
-                <select id="emergencyType">
-                    <option value="Cardiac Emergency">Cardiac Emergency</option>
-                    <option value="Trauma">Trauma</option>
-                    <option value="Respiratory Emergency">Respiratory Emergency</option>
-                    <option value="Accident">Accident</option>
-                    <option value="Other">Other</option>
-                </select>
-
-                <label>Priority Level</label>
-                <select id="priority">
-                    <option value="3">🔴 Critical</option>
-                    <option value="2">🟠 Moderate</option>
-                    <option value="1">🟢 Stable</option>
-                </select>
-
-                <button class="btn add-btn" onclick="addPatient()">
-                    Add to Priority Queue
-                </button>
-
-                <button class="btn emergency-btn" onclick="emergencyPatient()">
-                    🚨 Add Critical Emergency
-                </button>
-
-            </div>
-
-
-            <!-- Queue -->
             <div class="panel">
 
                 <div class="queue-header">
@@ -458,11 +425,11 @@
                     </div>
                 </div>
 
+                <div id="errorBox"></div>
+
                 <div id="queueList">
-                    <div class="empty">
-                        No patients in the priority queue.
-                        <br><br>
-                        Add a patient to begin.
+                    <div class="loading">
+                        Loading patients from backend...
                     </div>
                 </div>
 
@@ -473,272 +440,392 @@
         </section>
 
     </main>
-
-
     <script>
 
-        // Priority Queue
-        let priorityQueue = [];
+        const API_BASE = "https://smart-ambulance-suite-backend.onrender.com";
 
-        /*
-            Priority values:
-    
-            3 = Critical
-            2 = Moderate
-            1 = Stable
-    
-            Higher priority number gets served first.
-        */
+        let patients = [];
 
+        async function fetchPatients() {
 
-        function addPatient() {
+            const queueList = document.getElementById("queueList");
+            const errorBox = document.getElementById("errorBox");
 
-            const name = document.getElementById("patientName").value.trim();
-            const id = document.getElementById("patientId").value.trim();
-            const age = document.getElementById("patientAge").value;
-            const emergency = document.getElementById("emergencyType").value;
-            const priority = Number(document.getElementById("priority").value);
+            errorBox.innerHTML = "";
 
-            if (!name || !id || !age) {
-                alert("Please enter Patient Name, ID and Age.");
-                return;
-            }
+            try {
 
-            const patient = {
-                name: name,
-                id: id,
-                age: age,
-                emergency: emergency,
-                priority: priority,
-                time: new Date()
-            };
+                const response = await fetch(`${API_BASE}/patient/`);
 
-            // Add patient
-            priorityQueue.push(patient);
-
-            // Sort by priority
-            // Critical → Moderate → Stable
-            priorityQueue.sort((a, b) => {
-
-                if (b.priority !== a.priority) {
-                    return b.priority - a.priority;
+                if (!response.ok) {
+                    throw new Error(`Backend returned ${response.status}`);
                 }
 
-                // If same priority, earlier arrival comes first
-                return a.time - b.time;
-            });
+                patients = await response.json();
 
-            clearForm();
-            renderQueue();
-        }
+                await loadECGData();
 
+                renderQueue();
 
-        function emergencyPatient() {
+            } catch (error) {
 
-            const name = prompt("Enter critical patient's name:");
+                console.error("Failed to load patients:", error);
 
-            if (!name) {
-                return;
+                queueList.innerHTML = `
+            <div class="error">
+                Unable to connect to the hospital backend.
+                <br><br>
+                Please check that the backend is running.
+            </div>
+        `;
+
             }
 
-            const patient = {
-                name: name,
-                id: "EMG-" + Math.floor(Math.random() * 900 + 100),
-                age: "N/A",
-                emergency: "Critical Emergency",
-                priority: 3,
-                time: new Date()
-            };
+        }
 
-            priorityQueue.push(patient);
+        async function loadECGData() {
 
-            priorityQueue.sort((a, b) => {
+            for (const patient of patients) {
 
-                if (b.priority !== a.priority) {
-                    return b.priority - a.priority;
+                try {
+
+                    const response =
+                        await fetch(`${API_BASE}/ecg/${patient.id}`);
+
+                    if (response.ok) {
+
+                        const ecg = await response.json();
+
+                        patient.ecg = ecg;
+
+                    } else {
+
+                        patient.ecg = null;
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        `Could not load ECG for patient ${patient.id}`,
+                        error
+                    );
+
+                    patient.ecg = null;
+
                 }
 
-                return a.time - b.time;
-            });
-
-            renderQueue();
-
-            alert("🚨 Critical patient added to the front of the priority queue!");
-        }
-
-
-        function removePatient(index) {
-
-            const patient = priorityQueue[index];
-
-            if (!confirm("Remove " + patient.name + " from the queue?")) {
-                return;
             }
 
-            priorityQueue.splice(index, 1);
-
-            renderQueue();
         }
 
+        function getPriority(patient) {
+
+            const triage = (patient.triage_priority || "").toLowerCase();
+
+            const prediction =
+                patient.ecg?.prediction?.toLowerCase() || "";
+
+            /*
+                Priority logic:
+        
+                Possible STEMI → Critical
+                Level 1 / Critical → Critical
+                Level 2 / Urgent → Moderate
+                Everything else → Stable
+            */
+
+            if (
+                prediction.includes("stemi") ||
+                triage.includes("critical") ||
+                triage.includes("level 1")
+            ) {
+                return 3;
+            }
+
+            if (
+                triage.includes("urgent") ||
+                triage.includes("level 2") ||
+                triage.includes("moderate")
+            ) {
+                return 2;
+            }
+
+            return 1;
+
+        }
+
+        function getPriorityInfo(priority) {
+
+            if (priority === 3) {
+
+                return {
+                    name: "CRITICAL",
+                    className: "critical",
+                    iconClass: "critical-icon",
+                    icon: "🚨"
+                };
+
+            }
+
+            if (priority === 2) {
+
+                return {
+                    name: "MODERATE",
+                    className: "moderate",
+                    iconClass: "moderate-icon",
+                    icon: "⚠️"
+                };
+
+            }
+
+            return {
+                name: "STABLE",
+                className: "stable",
+                iconClass: "stable-icon",
+                icon: "✓"
+            };
+
+        }
 
         function renderQueue() {
 
-            const queueList = document.getElementById("queueList");
+            const queueList =
+                document.getElementById("queueList");
+
+            const queue = patients
+                .map(patient => ({
+                    ...patient,
+                    priority: getPriority(patient)
+                }))
+                .sort((a, b) => {
+
+                    if (b.priority !== a.priority) {
+                        return b.priority - a.priority;
+                    }
+
+                    return new Date(a.created_at) -
+                        new Date(b.created_at);
+
+                });
 
             document.getElementById("queueCount").innerText =
-                priorityQueue.length;
+                queue.length;
 
             document.getElementById("totalPatients").innerText =
-                priorityQueue.length;
+                queue.length;
 
+            document.getElementById("criticalPatients").innerText =
+                queue.filter(p => p.priority === 3).length;
 
-            // Count priorities
-            let critical = 0;
-            let moderate = 0;
-            let stable = 0;
+            document.getElementById("moderatePatients").innerText =
+                queue.filter(p => p.priority === 2).length;
 
-            priorityQueue.forEach(patient => {
+            document.getElementById("stablePatients").innerText =
+                queue.filter(p => p.priority === 1).length;
 
-                if (patient.priority === 3) {
-                    critical++;
-                }
-                else if (patient.priority === 2) {
-                    moderate++;
-                }
-                else {
-                    stable++;
-                }
-
-            });
-
-            document.getElementById("criticalPatients").innerText = critical;
-            document.getElementById("moderatePatients").innerText = moderate;
-            document.getElementById("stablePatients").innerText = stable;
-
-
-            if (priorityQueue.length === 0) {
+            if (queue.length === 0) {
 
                 queueList.innerHTML = `
-                <div class="empty">
-                    No patients in the priority queue.
-                    <br><br>
-                    Add a patient to begin.
-                </div>
-            `;
+            <div class="empty">
+                No patients have been received from the ambulance yet.
+                <br><br>
+                New ambulance patients will appear here automatically.
+            </div>
+        `;
 
                 document.getElementById("nextPatient").innerHTML = "";
 
                 return;
-            }
 
+            }
 
             queueList.innerHTML = "";
 
+            queue.forEach(patient => {
 
-            priorityQueue.forEach((patient, index) => {
+                const info = getPriorityInfo(patient.priority);
 
-                let priorityName;
-                let priorityClass;
-                let icon;
+                const firstName = patient.first_name || "";
+                const lastName = patient.last_name || "";
 
-                if (patient.priority === 3) {
-                    priorityName = "CRITICAL";
-                    priorityClass = "critical";
-                    icon = "🚨";
-                }
-                else if (patient.priority === 2) {
-                    priorityName = "MODERATE";
-                    priorityClass = "moderate";
-                    icon = "⚠️";
-                }
-                else {
-                    priorityName = "STABLE";
-                    priorityClass = "stable";
-                    icon = "✓";
-                }
+                const fullName =
+                    `${firstName} ${lastName}`.trim() ||
+                    "Unnamed Patient";
 
+                const ecg = patient.ecg;
 
-                const patientElement = document.createElement("div");
+                let aiHTML = "";
 
-                patientElement.className = "patient";
+                if (ecg && ecg.prediction) {
 
-                patientElement.innerHTML = `
+                    const confidence =
+                        ecg.confidence !== null &&
+                            ecg.confidence !== undefined
+                            ? `${Number(ecg.confidence).toFixed(2)}%`
+                            : "N/A";
 
-                <div class="patient-info">
+                    aiHTML = `
+                <div class="ai-result">
 
-                    <div class="priority-icon ${priorityClass}-icon">
-                        ${icon}
+                    <div class="ai-result-title">
+                        AI ECG ANALYSIS
                     </div>
 
-                    <div>
-                        <h4>${patient.name}</h4>
-
-                        <small>
-                            ID: ${patient.id}
-                            &nbsp; | &nbsp;
-                            Age: ${patient.age}
-                            <br>
-                            ${patient.emergency}
-                        </small>
+                    <div class="ai-prediction">
+                        ${ecg.prediction}
                     </div>
 
-                </div>
+                    <div class="ai-confidence">
+                        Confidence: ${confidence}
+                        &nbsp; | &nbsp;
+                        Status: ${ecg.status || "ANALYSED"}
+                    </div>
 
-                <div>
-                    <span class="priority-badge ${priorityClass}">
-                        ${priorityName}
-                    </span>
-
-                    <br>
-
-                    <button
-                        class="remove-btn"
-                        onclick="removePatient(${index})">
-                        Remove
-                    </button>
                 </div>
             `;
 
-                queueList.appendChild(patientElement);
+                } else {
 
-            });
+                    aiHTML = `
+                <div class="ai-result">
 
+                    <div class="ai-result-title">
+                        AI ECG ANALYSIS
+                    </div>
 
-            // Display next patient
-            const next = priorityQueue[0];
+                    <div class="ai-prediction">
+                        Awaiting ECG analysis
+                    </div>
 
-            document.getElementById("nextPatient").innerHTML = `
+                    <div class="ai-confidence">
+                        No analysed ECG is currently available.
+                    </div>
 
-            <div class="next-patient">
+                </div>
+            `;
 
-                <div class="next-patient-title">
-                    🚑 NEXT PATIENT TO BE SERVED
+                }
+
+                const card = document.createElement("div");
+
+                card.className = "patient";
+
+                card.innerHTML = `
+
+            <div class="patient-top">
+
+                <div class="patient-info">
+
+                    <div class="priority-icon ${info.iconClass}">
+                        ${info.icon}
+                    </div>
+
+                    <div>
+
+                        <h4>${fullName}</h4>
+
+                        <small>
+                            Patient ID: ${patient.id}
+                            &nbsp; | &nbsp;
+                            Age: ${patient.age ?? "N/A"}
+                            &nbsp; | &nbsp;
+                            Gender: ${patient.gender || "N/A"}
+                            <br>
+
+                            Triage:
+                            ${patient.triage_priority || "Not specified"}
+                        </small>
+
+                    </div>
+
                 </div>
 
-                <h4>${next.name}</h4>
-
-                <p>
-                    ${next.emergency}
-                    &nbsp; • &nbsp;
-                    Patient ID: ${next.id}
-                </p>
+                <span class="priority-badge ${info.className}">
+                    ${info.name}
+                </span>
 
             </div>
 
+            <div class="patient-details">
+
+                <div class="detail-box">
+                    <span>Patient ID</span>
+                    <strong>${patient.id}</strong>
+                </div>
+
+                <div class="detail-box">
+                    <span>Age</span>
+                    <strong>${patient.age ?? "N/A"}</strong>
+                </div>
+
+                <div class="detail-box">
+                    <span>Gender</span>
+                    <strong>${patient.gender || "N/A"}</strong>
+                </div>
+
+                <div class="detail-box">
+                    <span>Triage</span>
+                    <strong>${patient.triage_priority || "N/A"}</strong>
+                </div>
+
+            </div>
+
+            ${aiHTML}
+
+            ${patient.medical_notes
+                        ? `
+                    <div class="notes">
+                        <strong>Medical Notes:</strong>
+                        ${patient.medical_notes}
+                    </div>
+                `
+                        : ""
+                    }
+
         `;
+
+                queueList.appendChild(card);
+
+            });
+
+            const next = queue[0];
+
+            const nextName =
+                `${next.first_name || ""} ${next.last_name || ""}`.trim();
+
+            document.getElementById("nextPatient").innerHTML = `
+
+        <div class="next-patient">
+
+            <div class="next-patient-title">
+                🚑 NEXT PATIENT TO BE SERVED
+            </div>
+
+            <h4>${nextName || "Unnamed Patient"}</h4>
+
+            <p>
+                Patient ID: ${next.id}
+                &nbsp; • &nbsp;
+                ${getPriorityInfo(next.priority).name}
+            </p>
+
+        </div>
+
+    `;
+
         }
 
+        /*
+            Refresh every 10 seconds so newly registered
+            ambulance patients appear automatically.
+        */
 
-        function clearForm() {
+        fetchPatients();
 
-            document.getElementById("patientName").value = "";
-            document.getElementById("patientId").value = "";
-            document.getElementById("patientAge").value = "";
-
-        }
+        setInterval(fetchPatients, 10000);
 
     </script>
-
 </body>
 
 </html>

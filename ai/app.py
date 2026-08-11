@@ -1,46 +1,41 @@
 from fastapi import FastAPI, UploadFile, File
 from PIL import Image
+import tensorflow as tf
 import numpy as np
 import io
-
-from ai_edge_litert.interpreter import Interpreter
+import os
 
 app = FastAPI()
 
 # ============================================================
-# Load TFLite model
+# LOAD VALID KERAS MODEL
 # ============================================================
 
-interpreter = Interpreter(
-    model_path="ecg_classifier.tflite"
+MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "ecg_classifier.keras"
 )
 
-interpreter.allocate_tensors()
+model = tf.keras.models.load_model(MODEL_PATH)
 
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
+print("ECG Keras model loaded successfully")
+print("Model input shape:", model.input_shape)
+print("Model output shape:", model.output_shape)
 
 # ============================================================
-# TEMPORARY CLASS MAPPING
+# CLASS MAPPING
 # ============================================================
-# We are intentionally NOT assigning medical meanings yet.
-# The deployed TFLite model appears to have 3 output classes,
-# while train.py currently defines a 2-class model.
-#
-# We will identify the real class mapping before assigning
-# "normal" or "possible_stemi".
 
 CLASS_NAMES = {
-    0: "class_0",
-    1: "class_1",
-    2: "class_2"
+    0: "normal",
+    1: "possible_stemi"
 }
 
 IMG_SIZE = (224, 224)
 
 
 # ============================================================
-# Home
+# HOME
 # ============================================================
 
 @app.get("/")
@@ -51,25 +46,26 @@ def home():
 
 
 # ============================================================
-# Health check
+# HEALTH CHECK
 # ============================================================
 
 @app.get("/health")
 def health():
     return {
         "status": "healthy",
-        "model": "ecg_classifier.tflite"
+        "model": "ecg_classifier.keras"
     }
 
 
 # ============================================================
-# ECG Prediction
+# ECG PREDICTION
 # ============================================================
 
 @app.post("/predict")
 async def predict_ecg(
     file: UploadFile = File(...)
 ):
+
     contents = await file.read()
 
     # --------------------------------------------------------
@@ -87,7 +83,7 @@ async def predict_ecg(
     img = img.resize(IMG_SIZE)
 
     # --------------------------------------------------------
-    # Convert image to NumPy array
+    # Convert to NumPy
     # --------------------------------------------------------
 
     img_array = np.array(
@@ -101,41 +97,23 @@ async def predict_ecg(
         axis=0
     )
 
-    # Normalize
+    # Normalize exactly as training
     img_array = img_array / 255.0
 
     # --------------------------------------------------------
-    # Send image to TFLite model
+    # Prediction
     # --------------------------------------------------------
 
-    interpreter.set_tensor(
-        input_details[0]["index"],
-        img_array
-    )
+    prediction = model.predict(
+        img_array,
+        verbose=0
+    )[0]
 
     # --------------------------------------------------------
-    # Run inference
+    # DEBUG
     # --------------------------------------------------------
 
-    interpreter.invoke()
-
-    prediction = interpreter.get_tensor(
-        output_details[0]["index"]
-    )
-
-    # --------------------------------------------------------
-    # DEBUG INFORMATION
-    # --------------------------------------------------------
-
-    print(
-        "MODEL OUTPUT SHAPE:",
-        output_details[0]["shape"]
-    )
-
-    print(
-        "RAW MODEL OUTPUT:",
-        prediction.tolist()
-    )
+    print("RAW MODEL OUTPUT:", prediction.tolist())
 
     # --------------------------------------------------------
     # Get predicted class
@@ -146,7 +124,7 @@ async def predict_ecg(
     )
 
     confidence = float(
-        np.max(prediction) * 100
+        prediction[index] * 100
     )
 
     # --------------------------------------------------------
@@ -155,5 +133,13 @@ async def predict_ecg(
 
     return {
         "prediction": CLASS_NAMES[index],
-        "confidence": round(confidence, 2)
+        "confidence": round(confidence, 2),
+        "normal_probability": round(
+            float(prediction[0]) * 100,
+            2
+        ),
+        "possible_stemi_probability": round(
+            float(prediction[1]) * 100,
+            2
+        )
     }

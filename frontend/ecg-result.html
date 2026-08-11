@@ -372,6 +372,8 @@
     </div>
 
     <script>
+        const API_URL =
+            "https://smart-ambulance-suite-backend.onrender.com";
 
         function formatPrediction(value) {
 
@@ -431,8 +433,7 @@
         }
 
 
-        document.addEventListener("DOMContentLoaded", () => {
-
+        document.addEventListener("DOMContentLoaded", async () => {
             const patientData =
                 JSON.parse(
                     localStorage.getItem("patientData") || "{}"
@@ -499,29 +500,88 @@
                     ? `${vitalsData.respiratory_rate} /min`
                     : "-";
 
-
             // -----------------------------
             // AI RESULT
             // -----------------------------
 
-            const prediction =
-                ecgResult.prediction ||
-                ecgResult.ai_prediction ||
-                ecgResult.classification ||
-                null;
+            const patientId =
+                localStorage.getItem("patientId");
 
-            document.getElementById("prediction").textContent =
-                formatPrediction(prediction);
+            if (!patientId) {
 
-            document.getElementById("confidence").textContent =
-                formatConfidence(ecgResult.confidence);
+                document.getElementById("prediction").textContent =
+                    "Not available";
 
-            document.getElementById("ecgStatus").textContent =
-                ecgResult.status || "Analysis completed";
+                document.getElementById("confidence").textContent =
+                    "N/A";
 
-            document.getElementById("recommendation").textContent =
-                getRecommendation(prediction);
+                document.getElementById("ecgStatus").textContent =
+                    "NO PATIENT";
 
+                document.getElementById("recommendation").textContent =
+                    "Patient record not found.";
+
+            } else {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/ecg/${patientId}`
+                        );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `Could not load ECG result (${response.status})`
+                        );
+                    }
+
+                    const ecgResult =
+                        await response.json();
+
+                    console.log(
+                        "Latest ECG from backend:",
+                        ecgResult
+                    );
+
+                    const prediction =
+                        ecgResult.prediction ||
+                        ecgResult.ai_prediction ||
+                        ecgResult.classification ||
+                        null;
+
+                    document.getElementById("prediction").textContent =
+                        formatPrediction(prediction);
+
+                    document.getElementById("confidence").textContent =
+                        formatConfidence(ecgResult.confidence);
+
+                    document.getElementById("ecgStatus").textContent =
+                        ecgResult.status || "Analysis completed";
+
+                    document.getElementById("recommendation").textContent =
+                        getRecommendation(prediction);
+
+                } catch (error) {
+
+                    console.error(
+                        "Failed to load ECG result:",
+                        error
+                    );
+
+                    document.getElementById("prediction").textContent =
+                        "Not available";
+
+                    document.getElementById("confidence").textContent =
+                        "N/A";
+
+                    document.getElementById("ecgStatus").textContent =
+                        "ERROR";
+
+                    document.getElementById("recommendation").textContent =
+                        "Unable to load AI analysis.";
+                }
+            }
 
             // -----------------------------
             // ECG IMAGE

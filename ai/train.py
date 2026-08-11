@@ -51,7 +51,7 @@ model = Sequential([
     GlobalAveragePooling2D(),
     Dropout(0.3),
     Dense(128, activation="relu"),
-    Dense(3, activation="softmax")
+    Dense(2, activation="softmax")
 ])
 
 

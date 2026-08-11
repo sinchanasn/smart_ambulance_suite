@@ -17,9 +17,8 @@ input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
 CLASS_NAMES = {
-    0: "needs_review",
-    1: "normal",
-    2: "possible_stemi"
+    0: "normal",
+    1: "possible_stemi"
 }
 
 IMG_SIZE = (224, 224)
@@ -76,6 +75,8 @@ async def predict_ecg(
     prediction = interpreter.get_tensor(
         output_details[0]["index"]
     )
+
+    print("RAW MODEL OUTPUT:", prediction.tolist())
 
     index = int(np.argmax(prediction))
 

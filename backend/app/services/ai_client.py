@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _AI_SERVICE_URL: str = os.getenv("AI_SERVICE_URL", "http://localhost:8001").rstrip("/")
-_AI_TIMEOUT_SEC: float = float(os.getenv("AI_TIMEOUT_SEC", "30"))
+_AI_TIMEOUT_SEC: float = float(os.getenv("AI_TIMEOUT_SEC", "120"))
 
 # Full URL for the prediction endpoint
 _PREDICT_ENDPOINT: str = f"{_AI_SERVICE_URL}/predict"

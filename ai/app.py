@@ -7,10 +7,6 @@ import os
 
 app = FastAPI()
 
-# ============================================================
-# LOAD VALID KERAS MODEL
-# ============================================================
-
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
     "ecg_classifier.keras"
@@ -22,10 +18,6 @@ print("ECG Keras model loaded successfully")
 print("Model input shape:", model.input_shape)
 print("Model output shape:", model.output_shape)
 
-# ============================================================
-# CLASS MAPPING
-# ============================================================
-
 CLASS_NAMES = {
     0: "normal",
     1: "possible_stemi"
@@ -34,20 +26,12 @@ CLASS_NAMES = {
 IMG_SIZE = (224, 224)
 
 
-# ============================================================
-# HOME
-# ============================================================
-
 @app.get("/")
 def home():
     return {
         "message": "ECG AI Service Running"
     }
 
-
-# ============================================================
-# HEALTH CHECK
-# ============================================================
 
 @app.get("/health")
 def health():
@@ -57,79 +41,42 @@ def health():
     }
 
 
-# ============================================================
-# ECG PREDICTION
-# ============================================================
-
 @app.post("/predict")
 async def predict_ecg(
     file: UploadFile = File(...)
 ):
-
     contents = await file.read()
-
-    # --------------------------------------------------------
-    # Load image
-    # --------------------------------------------------------
 
     img = Image.open(
         io.BytesIO(contents)
     ).convert("RGB")
 
-    # --------------------------------------------------------
-    # Resize
-    # --------------------------------------------------------
-
     img = img.resize(IMG_SIZE)
-
-    # --------------------------------------------------------
-    # Convert to NumPy
-    # --------------------------------------------------------
 
     img_array = np.array(
         img,
         dtype=np.float32
     )
 
-    # Add batch dimension
     img_array = np.expand_dims(
         img_array,
         axis=0
     )
 
-    # Normalize exactly as training
     img_array = img_array / 255.0
-
-    # --------------------------------------------------------
-    # Prediction
-    # --------------------------------------------------------
 
     prediction = model.predict(
         img_array,
         verbose=0
     )[0]
 
-    # --------------------------------------------------------
-    # DEBUG
-    # --------------------------------------------------------
-
     print("RAW MODEL OUTPUT:", prediction.tolist())
 
-    # --------------------------------------------------------
-    # Get predicted class
-    # --------------------------------------------------------
-
-    index = int(
-        np.argmax(prediction)
-    )
+    index = int(np.argmax(prediction))
 
     confidence = float(
         prediction[index] * 100
     )
-
-    # --------------------------------------------------------
-    # Return result
-    # --------------------------------------------------------
 
     return {
         "prediction": CLASS_NAMES[index],
